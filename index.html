@@ -14,8 +14,13 @@
 
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            overflow: hidden;
             background-color: #0f172a;
+        }
+
+        @media (min-width: 1280px) {
+            body {
+                overflow: hidden;
+            }
         }
 
         ::-webkit-scrollbar {
@@ -1163,9 +1168,9 @@
                     </header>
 
                     {/* 메인 콘텐츠 */}
-                    <div className="flex flex-col lg:flex-row flex-1 min-h-0 relative z-10 overflow-hidden">
+                    <div className="flex flex-col xl:flex-row flex-1 min-h-0 relative z-10 overflow-hidden xl:overflow-hidden">
                         {/* 왼쪽 패널 */}
-                        <div className="w-full lg:w-1/3 border-b lg:border-b-0 lg:border-r border-white/10 bg-slate-800/80 backdrop-blur-sm overflow-y-auto h-full">
+                        <div className="w-full xl:w-1/3 border-b xl:border-b-0 xl:border-r border-white/10 bg-slate-800/80 backdrop-blur-sm overflow-y-auto xl:overflow-y-auto h-auto xl:h-full">
                             <div className="p-4">
                                 <SectionTitle title="기본 활동" />
                                 <div className="grid grid-cols-1 gap-3 mb-6">
@@ -1305,7 +1310,8 @@
 
                         {/* ... existing center and right panels ... */}
                         {/* 중앙 패널 */}
-                        <div className="w-full lg:w-1/3 flex flex-col bg-slate-900 relative border-b lg:border-b-0 h-full overflow-hidden">
+                        {/* 중앙 패널 */}
+                        <div className="w-full xl:w-1/3 flex flex-col bg-slate-900 relative border-b xl:border-b-0 h-[500px] xl:h-full overflow-hidden">
                             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none"></div>
                             <div className="p-4 flex-none border-b border-white/5 flex justify-between items-center">
                                 <SectionTitle title="역사의 기록" />
@@ -1334,7 +1340,8 @@
                         </div>
 
                         {/* 오른쪽 패널 */}
-                        <div className="w-full lg:w-1/3 lg:border-l border-white/10 bg-slate-800/80 backdrop-blur-sm overflow-y-auto h-full">
+                        {/* 오른쪽 패널 */}
+                        <div className="w-full xl:w-1/3 xl:border-l border-white/10 bg-slate-800/80 backdrop-blur-sm overflow-y-auto xl:overflow-y-auto h-auto xl:h-full">
                             <div className="p-4">
                                 <SectionTitle title="기술 발전표" />
                                 <div className="space-y-4">
