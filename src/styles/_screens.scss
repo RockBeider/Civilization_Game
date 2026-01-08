@@ -1,0 +1,286 @@
+// ========================================
+// Screen Styles - Full page screens
+// ========================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// Race selection screen
+.selection-screen {
+    min-height: 100vh;
+    width: 100%;
+    @include flex-col;
+    align-items: center;
+    background-color: $slate-900;
+    color: $slate-100;
+    padding: $spacing-8;
+    overflow-y: auto;
+}
+
+.selection-header {
+    text-align: center;
+    margin-bottom: $spacing-8;
+    padding-top: $spacing-10;
+    flex-shrink: 0;
+
+    .selection-title {
+        font-size: $text-5xl;
+        font-weight: 700;
+        margin-bottom: $spacing-4;
+        @include gradient-text($blue-400, $purple-400);
+    }
+
+    .selection-subtitle {
+        font-size: $text-xl;
+        color: $slate-400;
+    }
+}
+
+// Game guide box
+.guide-box {
+    max-width: 56rem;
+    width: 100%;
+    background-color: rgba($slate-800, 0.6);
+    padding: $spacing-6;
+    border-radius: $radius-xl;
+    border: 1px solid $slate-700;
+    margin-bottom: $spacing-8;
+    @include backdrop-blur;
+    @include shadow-xl;
+    flex-shrink: 0;
+
+    .guide-title {
+        font-size: $text-lg;
+        font-weight: 700;
+        color: $slate-200;
+        margin-bottom: $spacing-4;
+        @include flex-center;
+        gap: $spacing-2;
+    }
+
+    .guide-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: $spacing-4;
+        font-size: $text-sm;
+        color: $slate-300;
+        text-align: left;
+
+        @include md-up {
+            grid-template-columns: repeat(2, 1fr);
+            column-gap: $spacing-8;
+        }
+    }
+
+    .guide-item {
+        display: flex;
+        align-items: flex-start;
+        gap: $spacing-3;
+
+        .guide-icon {
+            background-color: $slate-700;
+            padding: 6px;
+            border-radius: $radius-md;
+        }
+
+        strong {
+            color: $slate-100;
+            display: block;
+        }
+    }
+}
+
+// Load game button
+.load-game-btn {
+    margin-bottom: $spacing-12;
+    flex-shrink: 0;
+
+    button {
+        padding: $spacing-3 $spacing-8;
+        background-color: $green-600;
+        color: $text-primary;
+        font-weight: 700;
+        border-radius: $radius-full;
+        font-size: $text-lg;
+        @include shadow-lg;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: $spacing-2;
+
+        &:hover {
+            background-color: $green-500;
+            box-shadow: 0 0 20px rgba($green-500, 0.5);
+        }
+    }
+}
+
+// Race cards
+.race-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-8;
+    max-width: 64rem;
+    width: 100%;
+    flex-shrink: 0;
+    padding-bottom: $spacing-10;
+
+    @include md-up {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.race-card {
+    background-color: $slate-800;
+    padding: $spacing-8;
+    border-radius: $radius-xl;
+    border: 1px solid $slate-700;
+    @include flex-col;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    @include shadow-lg;
+    transition: all 0.2s;
+
+    &:hover {
+        border-color: $blue-500;
+        background-color: rgba($slate-800, 0.9);
+        transform: scale(1.05);
+
+        .race-icon {
+            color: $blue-400;
+        }
+
+        .race-start {
+            background-color: $blue-600;
+        }
+    }
+
+    .race-icon {
+        margin-bottom: $spacing-4;
+        color: $slate-400;
+        transition: color 0.2s;
+    }
+
+    .race-name {
+        font-size: $text-2xl;
+        font-weight: 700;
+        margin-bottom: $spacing-2;
+    }
+
+    .race-desc {
+        color: $slate-400;
+        margin-bottom: $spacing-6;
+        font-size: $text-sm;
+        height: 2.5rem;
+    }
+
+    .race-stats {
+        width: 100%;
+        background-color: rgba($slate-900, 0.5);
+        padding: $spacing-4;
+        border-radius: $radius-lg;
+        font-size: $text-sm;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-2;
+
+        .stat-row {
+            @include flex-between;
+
+            .stat-label {
+                color: $slate-500;
+            }
+
+            .stat-value {
+                &.positive {
+                    color: $green-400;
+                }
+
+                &.negative {
+                    color: $red-400;
+                }
+
+                &.neutral {
+                    color: $slate-300;
+                }
+            }
+        }
+    }
+
+    .race-start {
+        margin-top: $spacing-6;
+        width: 100%;
+        padding: $spacing-2;
+        background-color: $slate-700;
+        border-radius: $radius-md;
+        font-weight: 700;
+        transition: background-color 0.2s;
+    }
+}
+
+// Victory screen
+.victory-screen {
+    min-height: 100vh;
+    @include flex-col;
+    @include flex-center;
+    background-color: $bg-primary;
+    color: $text-primary;
+    padding: $spacing-4;
+    position: relative;
+    overflow: hidden;
+}
+
+.victory-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.3;
+}
+
+.victory-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+
+    .victory-icon {
+        margin-bottom: $spacing-6;
+        color: $purple-400;
+    }
+
+    .victory-title {
+        font-size: $text-6xl;
+        font-weight: 700;
+        margin-bottom: $spacing-4;
+        @include gradient-text($blue-400, $pink-400);
+    }
+
+    .victory-text {
+        font-size: $text-2xl;
+        color: $slate-300;
+        margin-bottom: $spacing-8;
+        max-width: 42rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .victory-btn {
+        padding: $spacing-4 $spacing-8;
+        background-color: $text-primary;
+        color: $bg-primary;
+        font-weight: 700;
+        border-radius: $radius-full;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+            background-color: $slate-200;
+            transform: scale(1.05);
+        }
+    }
+}

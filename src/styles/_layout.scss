@@ -1,0 +1,264 @@
+// ========================================
+// Layout Styles
+// ========================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// Main game container
+.game-container {
+    @include flex-col;
+    height: 100vh;
+    max-width: 80rem; // max-w-7xl
+    margin: 0 auto;
+    background-color: $slate-900;
+    @include shadow-2xl;
+}
+
+// Header
+.game-header {
+    padding: $spacing-4;
+    // border-bottom: 1px solid $border-light;
+    transition: all 1s ease;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+
+    @include xl-up {
+        position: relative;
+        top: auto;
+        z-index: auto;
+    }
+
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.header-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5), $slate-900);
+    pointer-events: none;
+}
+
+.header-content {
+    position: relative;
+    z-index: 10;
+}
+
+.header-top {
+    @include flex-between;
+    margin-bottom: $spacing-4;
+    margin-top: $spacing-2;
+}
+
+.header-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-4;
+}
+
+.age-icon {
+    padding: $spacing-3;
+    border-radius: $radius-full;
+    @include glass;
+    border: 1px solid $border-light;
+}
+
+.age-title {
+    font-size: $text-3xl;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.07));
+}
+
+.civ-info {
+    font-size: $text-sm;
+    color: $slate-200;
+    opacity: 0.9;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+}
+
+.info-badge {
+    font-size: $text-xs;
+    padding: $spacing-1 $spacing-2;
+    border-radius: $radius-full;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-left: $spacing-2;
+}
+
+.slot-badge {
+    font-size: $text-xs;
+    padding: $spacing-1 $spacing-2;
+    border-radius: $radius-full;
+    background-color: rgba($blue-500, 0.2);
+    color: $blue-300;
+    margin-left: $spacing-1;
+}
+
+// Control buttons
+.control-buttons {
+    position: absolute;
+    top: $spacing-4;
+    right: $spacing-4;
+    z-index: 20;
+    display: flex;
+    gap: $spacing-2;
+}
+
+.control-btn {
+    padding: $spacing-2;
+    @include glass;
+    border-radius: $radius-full;
+    color: $text-primary;
+    transition: background-color 0.2s;
+    border: 1px solid $border-light;
+    cursor: pointer;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+}
+
+// Resource bar
+.resource-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-4;
+    @include glass;
+    padding: $spacing-3;
+    border-radius: $radius-lg;
+    border: 1px solid $border-medium;
+}
+
+// Main content area
+.main-content {
+    @include flex-col;
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    z-index: 10;
+
+    @include xl-up {
+        flex-direction: row;
+        overflow: hidden;
+    }
+}
+
+// Panel base
+.panel {
+    width: 100%;
+    border-bottom: 1px solid $border-light;
+    background-color: rgba($slate-800, 0.8);
+    @include backdrop-blur;
+
+    @include xl-up {
+        width: 33.333%;
+        border-bottom: none;
+        overflow-y: auto;
+        height: 100%;
+    }
+}
+
+.panel-left {
+    @extend .panel;
+
+    @include xl-up {
+        border-right: 1px solid $border-light;
+    }
+}
+
+.panel-center {
+    @include flex-col;
+    width: 100%;
+    background-color: $slate-900;
+    position: relative;
+    border-bottom: 1px solid $border-light;
+    height: 400px;
+    overflow: hidden;
+
+    @include xl-up {
+        width: 33.333%;
+        border-bottom: none;
+        height: 100%;
+    }
+}
+
+.panel-right {
+    @extend .panel;
+
+    @include xl-up {
+        border-left: 1px solid $border-light;
+    }
+}
+
+.panel-inner {
+    padding: $spacing-4;
+}
+
+// Log panel
+.log-overlay {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+    opacity: 0.2;
+    pointer-events: none;
+}
+
+.log-header {
+    padding: $spacing-4;
+    flex-shrink: 0;
+    border-bottom: 1px solid $border-medium;
+}
+
+.log-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: $spacing-4;
+    font-family: $font-mono;
+    font-size: $text-sm;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+}
+
+.log-entry {
+    padding: $spacing-2;
+    border-radius: $radius-md;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-left: 2px solid $slate-500;
+
+    &.log-age {
+        background-color: rgba($amber-900, 0.8);
+        border: 1px solid $yellow-500;
+        color: $yellow-100;
+        font-weight: 700;
+        padding: $spacing-3;
+        margin: $spacing-3 0;
+        text-align: center;
+        font-size: $text-lg;
+        letter-spacing: 0.05em;
+        border-left: none;
+    }
+}
+
+.log-number {
+    opacity: 0.5;
+    font-size: $text-xs;
+    margin-right: $spacing-2;
+}
+
+.log-disaster {
+    color: $red-400;
+    font-weight: 700;
+}
+
+.log-tech {
+    color: $cyan-300;
+    font-weight: 600;
+}

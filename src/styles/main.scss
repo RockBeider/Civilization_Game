@@ -1,0 +1,26 @@
+// ========================================
+// Main SCSS Entry Point
+// ========================================
+
+// Import order matters - variables and mixins first
+// Import order matters - variables and mixins first
+@use 'variables';
+@use 'mixins';
+
+// Base styles
+@use 'base';
+
+// Layout
+@use 'layout';
+
+// Components
+@use 'components';
+
+// Screens (selection, victory)
+@use 'screens';
+
+// Modals
+@use 'modals';
+
+// Utilities (last for override capability)
+@use 'utilities';

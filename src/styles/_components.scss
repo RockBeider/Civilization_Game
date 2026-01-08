@@ -1,0 +1,411 @@
+// ========================================
+// Component Styles
+// ========================================
+
+@use 'sass:color';
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// Section title
+.section-title {
+    font-size: $text-xs;
+    font-weight: 700;
+    color: $slate-500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: $spacing-4;
+    border-bottom: 1px solid $slate-700;
+    padding-bottom: $spacing-2;
+}
+
+// Resource card
+.resource-card {
+    @include flex-col;
+    background-color: $slate-800;
+    padding: $spacing-3;
+    border-radius: $radius-md;
+    border: 1px solid $slate-700;
+}
+
+.resource-label {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    margin-bottom: $spacing-1;
+    color: $slate-400;
+    font-size: $text-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.resource-value {
+    font-size: $text-xl;
+    font-weight: 700;
+    font-family: $font-mono;
+}
+
+.resource-rate {
+    font-size: $text-xs;
+    color: $slate-500;
+    font-family: $font-mono;
+}
+
+// Action buttons
+.action-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-3;
+    margin-bottom: $spacing-6;
+}
+
+.action-btn {
+    @include btn-base;
+    width: 100%;
+    @include shadow-lg;
+
+    .btn-icon {
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: $spacing-2;
+        border-radius: $radius-full;
+    }
+
+    .btn-content {
+        text-align: left;
+    }
+
+    .btn-label {
+        font-weight: 700;
+        font-size: $text-lg;
+    }
+
+    .btn-desc {
+        font-size: $text-xs;
+        opacity: 0.7;
+    }
+}
+
+.btn-food {
+    background-color: $yellow-600;
+
+    &:hover {
+        background-color: color.adjust($yellow-600, $lightness: -5%);
+    }
+}
+
+.btn-prod {
+    background-color: $orange-600;
+
+    &:hover {
+        background-color: color.adjust($orange-600, $lightness: -5%);
+    }
+}
+
+.btn-sci {
+    background-color: $blue-600;
+
+    &:hover {
+        background-color: color.adjust($blue-600, $lightness: -5%);
+    }
+}
+
+// Building cards
+.building-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+    margin-bottom: $spacing-6;
+}
+
+.building-card {
+    padding: $spacing-3;
+    border-radius: $radius-lg;
+    border: 1px solid $border-medium;
+    transition: all 0.2s;
+    cursor: pointer;
+    @include flex-between;
+
+    &.affordable {
+        background-color: $slate-700;
+
+        &:hover {
+            background-color: $slate-600;
+        }
+    }
+
+    &.unaffordable {
+        background-color: $slate-800;
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.building-info {
+    .building-name {
+        font-weight: 700;
+        font-size: $text-sm;
+        color: $slate-200;
+        display: flex;
+        align-items: center;
+        gap: $spacing-2;
+    }
+
+    .building-cost {
+        font-size: $text-xs;
+        color: $slate-400;
+        margin-top: $spacing-1;
+    }
+}
+
+.building-output {
+    font-size: $text-xs;
+    color: $slate-500;
+    text-align: right;
+
+    .output-value {
+        font-family: $font-mono;
+    }
+
+    .output-bonus {
+        color: $green-400;
+        margin-left: $spacing-1;
+        font-size: 11px;
+    }
+
+    .output-label {
+        font-size: 10px;
+        opacity: 0.8;
+    }
+}
+
+.cost-food {
+    color: $yellow-400;
+}
+
+.cost-prod {
+    color: $orange-400;
+}
+
+.cost-sci {
+    color: $blue-400;
+}
+
+// Upgrade button
+.upgrade-btn {
+    width: 100%;
+    background-color: $slate-700;
+    border: 1px solid $slate-600;
+    padding: $spacing-4;
+    border-radius: $radius-lg;
+    @include flex-between;
+    margin-bottom: $spacing-4;
+    transition: all 0.2s;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $slate-600;
+    }
+
+    .upgrade-icon {
+        background-color: rgba($purple-900, 0.5);
+        padding: $spacing-2;
+        border-radius: $radius-md;
+        color: $purple-400;
+    }
+
+    .upgrade-info {
+        text-align: left;
+
+        .upgrade-title {
+            font-weight: 700;
+            color: $slate-200;
+        }
+
+        .upgrade-desc {
+            font-size: $text-xs;
+            color: $slate-400;
+        }
+    }
+
+    .upgrade-arrow {
+        color: $slate-500;
+    }
+}
+
+// Wonder section
+.wonder-complete {
+    padding: $spacing-4;
+    border-radius: $radius-lg;
+    background-color: rgba($amber-900, 0.2);
+    border: 1px solid rgba($yellow-500, 0.5);
+    text-align: center;
+
+    .wonder-icon {
+        color: $yellow-500;
+        margin-bottom: $spacing-2;
+    }
+
+    .wonder-name {
+        font-weight: 700;
+        color: $yellow-500;
+    }
+
+    .wonder-effect {
+        font-size: $text-xs;
+        color: rgba($yellow-200, 0.7);
+        margin-top: $spacing-1;
+    }
+}
+
+.wonder-card {
+    padding: $spacing-4;
+    border-radius: $radius-lg;
+    border: 1px solid rgba($yellow-600, 0.3);
+    transition: all 0.2s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    &.affordable {
+        background-color: rgba($amber-900, 0.3);
+
+        &:hover {
+            background-color: rgba($amber-900, 0.5);
+            border-color: $yellow-500;
+        }
+    }
+
+    &.unaffordable {
+        background-color: $slate-800;
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+}
+
+.wonder-content {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-3;
+    position: relative;
+    z-index: 10;
+
+    .wonder-icon-wrapper {
+        padding: $spacing-2;
+        background-color: rgba($amber-900, 0.8);
+        border-radius: $radius-full;
+        border: 1px solid $yellow-700;
+        color: $yellow-500;
+    }
+
+    .wonder-details {
+        .wonder-title {
+            font-weight: 700;
+            color: $yellow-400;
+        }
+
+        .wonder-desc {
+            font-size: $text-xs;
+            color: $slate-300;
+            margin-bottom: $spacing-2;
+        }
+
+        .wonder-costs {
+            font-size: $text-xs;
+            font-family: $font-mono;
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-1;
+        }
+    }
+}
+
+// Tech tree
+.tech-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+}
+
+.tech-card {
+    position: relative;
+    padding: $spacing-4;
+    border-radius: $radius-lg;
+    border: 1px solid;
+    transition: all 0.2s;
+
+    &.researched {
+        background-color: rgba($green-900, 0.2);
+        border-color: rgba($green-500, 0.3);
+        opacity: 0.7;
+    }
+
+    &.available {
+        cursor: pointer;
+
+        &.affordable {
+            background-color: rgba($indigo-900, 0.4);
+            border-color: $indigo-500;
+
+            &:hover {
+                background-color: rgba($indigo-800, 0.4);
+            }
+        }
+
+        &.unaffordable {
+            background-color: $slate-800;
+            border-color: $slate-600;
+            opacity: 0.8;
+        }
+    }
+}
+
+.tech-header {
+    @include flex-between;
+    margin-bottom: $spacing-2;
+
+    .tech-name {
+        font-weight: 700;
+
+        &.researched {
+            color: $green-400;
+        }
+
+        &.available {
+            color: $indigo-300;
+        }
+    }
+
+    .tech-icon {
+        &.researched {
+            color: $green-500;
+        }
+
+        &.available {
+            color: $blue-400;
+        }
+    }
+}
+
+.tech-desc {
+    font-size: $text-xs;
+    color: $slate-400;
+    margin-bottom: $spacing-2;
+}
+
+.tech-cost {
+    font-size: $text-xs;
+    font-family: $font-mono;
+
+    &.affordable {
+        color: $blue-300;
+    }
+
+    &.unaffordable {
+        color: $red-400;
+    }
+}
+
+.tech-complete-msg {
+    text-align: center;
+    padding: $spacing-4;
+    color: $slate-500;
+}

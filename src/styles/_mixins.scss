@@ -1,0 +1,101 @@
+// ========================================
+// Mixins - Reusable Patterns
+// ========================================
+
+@use 'variables' as *;
+
+// Flexbox shortcuts
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@mixin flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+// Backdrop blur effect
+@mixin backdrop-blur {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+// Glass effect
+@mixin glass($bg-opacity: 0.4) {
+    background-color: rgba(0, 0, 0, $bg-opacity);
+    @include backdrop-blur;
+}
+
+// Button base
+@mixin btn-base {
+    display: flex;
+    align-items: center;
+    gap: $spacing-4;
+    padding: $spacing-4;
+    border-radius: $radius-lg;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    color: $text-primary;
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+// Card base
+@mixin card-base {
+    background-color: $slate-800;
+    border: 1px solid $border-light;
+    border-radius: $radius-lg;
+    padding: $spacing-4;
+}
+
+// Responsive breakpoint
+@mixin xl-up {
+    @media (min-width: $breakpoint-xl) {
+        @content;
+    }
+}
+
+@mixin md-up {
+    @media (min-width: $breakpoint-md) {
+        @content;
+    }
+}
+
+// Truncate text
+@mixin truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// Gradient text
+@mixin gradient-text($from, $to) {
+    background: linear-gradient(to right, $from, $to);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+// Shadow effects
+@mixin shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+@mixin shadow-xl {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+@mixin shadow-2xl {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}

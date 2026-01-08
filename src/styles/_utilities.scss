@@ -1,0 +1,174 @@
+// ========================================
+// Utility Classes - Age Colors & Dynamic Styles
+// ========================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// Age-specific text colors
+.age-stone {
+    color: $stone-300;
+}
+
+.age-amber {
+    color: $amber-300;
+}
+
+.age-slate {
+    color: $slate-300;
+}
+
+.age-orange {
+    color: $orange-300;
+}
+
+.age-cyan {
+    color: $cyan-300;
+}
+
+.age-violet {
+    color: $violet-300;
+}
+
+// Icon coloring
+.icon-text-yellow {
+    color: $yellow-400;
+}
+
+.icon-text-orange {
+    color: $orange-400;
+}
+
+.icon-text-blue {
+    color: $blue-400;
+}
+
+.icon-text-green {
+    color: $green-500;
+}
+
+.icon-text-red {
+    color: $red-500;
+}
+
+.icon-text-purple {
+    color: $purple-400;
+}
+
+// Cost text coloring
+.text-yellow {
+    color: $yellow-500;
+}
+
+.text-orange {
+    color: $orange-500;
+}
+
+.text-blue {
+    color: $blue-500;
+}
+
+.text-red {
+    color: $red-400;
+}
+
+// Flexbox utilities
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.gap-1 {
+    gap: $spacing-1;
+}
+
+.gap-2 {
+    gap: $spacing-2;
+}
+
+.gap-3 {
+    gap: $spacing-3;
+}
+
+.gap-4 {
+    gap: $spacing-4;
+}
+
+// Margin/Padding utilities
+.mb-2 {
+    margin-bottom: $spacing-2;
+}
+
+.mb-4 {
+    margin-bottom: $spacing-4;
+}
+
+.ml-1 {
+    margin-left: $spacing-1;
+}
+
+.ml-2 {
+    margin-left: $spacing-2;
+}
+
+.mt-1 {
+    margin-top: $spacing-1;
+}
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+// Text utilities
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.font-mono {
+    font-family: $font-mono;
+}
+
+.text-xs {
+    font-size: $text-xs;
+}
+
+.text-sm {
+    font-size: $text-sm;
+}
+
+// Display utilities
+.hidden {
+    display: none;
+}
+
+.block {
+    display: block;
+}

@@ -1,0 +1,931 @@
+const { useState, useEffect, useRef, useCallback } = React;
+
+// --- 아이콘 컴포넌트 ---
+const IconBase = ({ children, size = 24, className = "", onClick, title }) => (
+    <svg onClick={onClick} title={title} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={{ cursor: onClick ? 'pointer' : 'inherit' }}>{children}</svg>
+);
+
+const Icons = {
+    User: (p) => <IconBase {...p}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></IconBase>,
+    Hammer: (p) => <IconBase {...p}><path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0-.83 0-2.17.83-3L12 9" /><path d="M17.64 15 22 10.64" /><path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25V7.86c0-.55-.45-1-1-1H14.14c-.83 0-1.64.32-2.25.92L9.64 10" /></IconBase>,
+    BrainCircuit: (p) => <IconBase {...p}><path d="M12 4.5a2.5 2.5 0 0 0-4.96-.46 2.5 2.5 0 0 0-1.98 3 2.5 2.5 0 0 0-1.32 4.24 3 3 0 0 0 .34 5.58 2.5 2.5 0 0 0 2.96 3.08 2.5 2.5 0 0 0 4.91.05L12 20V4.5Z" /><path d="M16 8V5c0-1.1.9-2 2-2" /><path d="M12 13h4" /><path d="M12 18h6a2 2 0 0 1 2 2v1" /><path d="M12 8h8" /></IconBase>,
+    Pickaxe: (p) => <IconBase {...p}><path d="M14.5 5.5C18.5 9.5 20 12 20 12l-4 4-2-2-4 4-5.5-5.5 4-4-2-2 4-4Z" /><path d="m2.5 21.5 9-9" /></IconBase>,
+    Scroll: (p) => <IconBase {...p}><path d="M8 19V5c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v1" /><path d="M8 19a2 2 0 1 0 0-4h12V4.5a2.5 2.5 0 0 0-5 0V5" /><path d="M10 22h8a2 2 0 0 0 2-2v-1" /></IconBase>,
+    Zap: (p) => <IconBase {...p}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></IconBase>,
+    Rocket: (p) => <IconBase {...p}><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" /><path d="m12 15-3-3a22 22 0 0 1 2-5.25 22 22 0 0 1 5.35-5.35A22 22 0 0 1 17 9a22 22 0 0 1-5 6z" /><path d="M9 22c5 1 10-2.5 11-8.89a6 6 0 0 0-1.07-1.07 4 4 0 0 0-1.08-1.08" /></IconBase>,
+    FlaskConical: (p) => <IconBase {...p}><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2" /><path d="M8.5 2h7" /><path d="M7 16h10" /></IconBase>,
+    Wheat: (p) => <IconBase {...p}><path d="M2 22 16 8" /><path d="M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z" /><path d="M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z" /><path d="M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z" /><path d="M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z" /></IconBase>,
+    Shield: (p) => <IconBase {...p}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></IconBase>,
+    Star: (p) => <IconBase {...p}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></IconBase>,
+    Globe: (p) => <IconBase {...p}><circle cx="12" cy="12" r="10" /><line x1="2" x2="22" y1="12" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z" /></IconBase>,
+    Volume2: (p) => <IconBase {...p}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /></IconBase>,
+    VolumeX: (p) => <IconBase {...p}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><line x1="23" x2="17" y1="9" y2="15" /><line x1="17" x2="23" y1="9" y2="15" /></IconBase>,
+    Crown: (p) => <IconBase {...p}><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" /></IconBase>,
+    Save: (p) => <IconBase {...p}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></IconBase>,
+    RotateCcw: (p) => <IconBase {...p}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></IconBase>,
+    Trash: (p) => <IconBase {...p}><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></IconBase>,
+    Home: (p) => <IconBase {...p}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></IconBase>,
+    X: (p) => <IconBase {...p}><path d="M18 6 6 18" /><path d="m6 6 12 12" /></IconBase>,
+    FilePlus: (p) => <IconBase {...p}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /><line x1="12" x2="12" y1="18" y2="12" /><line x1="9" x2="15" y1="15" y2="15" /></IconBase>,
+    Flame: (p) => <IconBase {...p}><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.1.2-2.2.6-3.268" /></IconBase>,
+    Maximize: (p) => <IconBase {...p}><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" /></IconBase>,
+    Minimize: (p) => <IconBase {...p}><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" /></IconBase>,
+    ArrowUp: (p) => <IconBase {...p}><line x1="12" x2="12" y1="19" y2="5" /><polyline points="5 12 12 5 19 12" /></IconBase>,
+    Wrench: (p) => <IconBase {...p}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" /></IconBase>
+};
+
+const { Pickaxe, Scroll, Zap, User, Rocket, FlaskConical, Hammer, Wheat, BrainCircuit, Shield, Star, Globe, Volume2, VolumeX, Crown, Save, RotateCcw, Trash, Home, X, FilePlus, Flame, Maximize, Minimize, ArrowUp, Wrench } = Icons;
+
+// --- 사운드 매니저 ---
+const useSound = () => {
+    const audioCtxRef = useRef(null);
+    const [isMuted, setIsMuted] = useState(false);
+    const [isInit, setIsInit] = useState(false);
+
+    const initAudio = () => {
+        if (isInit) return;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        audioCtxRef.current = new AudioContext();
+        setIsInit(true);
+    };
+
+    const playSound = useCallback((type) => {
+        if (isMuted || !audioCtxRef.current) return;
+        const ctx = audioCtxRef.current;
+        if (ctx.state === 'suspended') ctx.resume();
+        const osc = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        osc.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        const now = ctx.currentTime;
+
+        if (type === 'click') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
+            gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+            osc.start(now); osc.stop(now + 0.1);
+        } else if (type === 'build') {
+            osc.type = 'square'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(100, now + 0.15);
+            gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.linearRampToValueAtTime(0.001, now + 0.15);
+            osc.start(now); osc.stop(now + 0.15);
+        } else if (type === 'upgrade') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(440, now); osc.frequency.linearRampToValueAtTime(880, now + 0.2);
+            gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.linearRampToValueAtTime(0.001, now + 0.2);
+            osc.start(now); osc.stop(now + 0.2);
+        } else if (type === 'research') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(523.25, now); osc.frequency.setValueAtTime(659.25, now + 0.1); osc.frequency.setValueAtTime(783.99, now + 0.2);
+            gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.linearRampToValueAtTime(0.05, now + 0.2); gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            osc.start(now); osc.stop(now + 0.4);
+        } else if (type === 'age') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(220, now); osc.frequency.linearRampToValueAtTime(880, now + 1.5);
+            gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.linearRampToValueAtTime(0.1, now + 1.0); gainNode.gain.linearRampToValueAtTime(0.001, now + 2.0);
+            osc.start(now); osc.stop(now + 2.0);
+        } else if (type === 'wonder') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(261.63, now); osc.frequency.exponentialRampToValueAtTime(523.25, now + 2);
+            const osc2 = ctx.createOscillator(); const gain2 = ctx.createGain(); osc2.connect(gain2); gain2.connect(ctx.destination);
+            osc2.type = 'triangle'; osc2.frequency.setValueAtTime(329.63, now); osc2.frequency.exponentialRampToValueAtTime(659.25, now + 2);
+            gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.linearRampToValueAtTime(0, now + 2.5);
+            gain2.gain.setValueAtTime(0.1, now); gain2.gain.linearRampToValueAtTime(0, now + 2.5);
+            osc.start(now); osc.stop(now + 2.5); osc2.start(now); osc2.stop(now + 2.5);
+        } else if (type === 'disaster') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, now); osc.frequency.linearRampToValueAtTime(50, now + 0.5);
+            gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.linearRampToValueAtTime(0.001, now + 0.5);
+            osc.start(now); osc.stop(now + 0.5);
+        } else if (type === 'error') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(100, now + 0.1);
+            gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.linearRampToValueAtTime(0.001, now + 0.1);
+            osc.start(now); osc.stop(now + 0.1);
+        }
+    }, [isMuted, isInit]);
+    const toggleMute = () => setIsMuted(!isMuted);
+    return { initAudio, playSound, isMuted, toggleMute };
+};
+
+// --- 게임 데이터 ---
+const RACES = [
+    { id: 'human', name: '호모 사피엔스', desc: '균형 잡힌 능력', bonus: { food: 1.0, prod: 1.0, sci: 1.0 }, icon: <User size={48} /> },
+    { id: 'neanderthal', name: '네안데르탈인', desc: '높은 생산력, 낮은 연구', bonus: { food: 0.9, prod: 1.5, sci: 0.7 }, icon: <Hammer size={48} /> },
+    { id: 'atlantean', name: '아틀란티스인', desc: '높은 지능, 많은 식량 소모', bonus: { food: 0.7, prod: 0.8, sci: 1.5 }, icon: <BrainCircuit size={48} /> }
+];
+
+const DISASTERS_BY_AGE = {
+    0: [{ name: '대가뭄', type: 'resource', target: 'food', ratio: 0.3, desc: '가뭄으로 식량 30%가 유실되었습니다!' }, { name: '산불', type: 'building', target: 'farm', count: 1, desc: '산불이 번져 채집지 1곳이 불탔습니다!' }],
+    1: [{ name: '대홍수', type: 'resource', target: 'food', ratio: 0.4, desc: '홍수로 식량 40%가 떠내려갔습니다!' }, { name: '지진', type: 'building', target: 'mine', count: 1, desc: '지진으로 광산 1곳이 무너졌습니다!' }],
+    2: [{ name: '흑사병', type: 'resource', target: 'food', ratio: 0.5, desc: '역병으로 식량 생산이 50% 급감했습니다!' }, { name: '전쟁', type: 'resource', target: 'prod', ratio: 0.4, desc: '전쟁 발발! 생산 물자 40%가 징발되었습니다.' }],
+    3: [{ name: '공장 화재', type: 'building', target: 'mine', count: 2, desc: '대형 화재로 공장 2곳이 전소되었습니다!' }, { name: '경제 대공황', type: 'resource', target: 'prod', ratio: 0.5, desc: '대공황으로 생산력이 50% 감소했습니다.' }],
+    4: [{ name: '금융 위기', type: 'resource', target: 'prod', ratio: 0.6, desc: '금융 위기로 생산 자금 60%가 증발했습니다.' }, { name: '사이버 테러', type: 'resource', target: 'sci', ratio: 0.4, desc: '해킹으로 연구 데이터 40%가 삭제되었습니다.' }],
+    5: [{ name: '태양 흑점 폭발', type: 'resource', target: 'sci', ratio: 0.8, desc: '강력한 자기장으로 연구 데이터 80% 손실!' }, { name: '소행성 충돌', type: 'building_all', count: 1, desc: '소행성 파편이 떨어져 모든 종류의 건물이 1개씩 파괴되었습니다!' }]
+};
+
+const WONDERS = {
+    human: { name: '대피라미드', desc: '위대한 유산: 모든 자원 생산량 +50%', cost: { food: 1000, prod: 1000, sci: 500 }, effect: 'all_boost' },
+    neanderthal: { name: '거인의 제단', desc: '고대의 힘: 생산력 획득량 3배', cost: { food: 500, prod: 2000, sci: 0 }, effect: 'prod_boost' },
+    atlantean: { name: '심해의 수정탑', desc: '잃어버린 기술: 과학 획득량 2배', cost: { food: 2000, prod: 500, sci: 2000 }, effect: 'sci_boost' }
+};
+
+const AGES = [
+    { id: 0, name: '원시 시대', color: 'age-stone', img: 'https://images.unsplash.com/photo-1518176258769-e3d62283dc15?auto=format&fit=crop&w=1600&q=80' },
+    { id: 1, name: '고대 시대', color: 'age-amber', img: 'https://images.unsplash.com/photo-1565058727220-4318c679234b?auto=format&fit=crop&w=1600&q=80' },
+    { id: 2, name: '중세 시대', color: 'age-slate', img: 'https://images.unsplash.com/photo-1605806616949-1e87b487bc2a?auto=format&fit=crop&w=1600&q=80' },
+    { id: 3, name: '산업 시대', color: 'age-orange', img: 'https://images.unsplash.com/photo-1535970793577-7d045c777e34?auto=format&fit=crop&w=1600&q=80' },
+    { id: 4, name: '현대 시대', color: 'age-cyan', img: 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=1600&q=80' },
+    { id: 5, name: '우주 시대', color: 'age-violet', img: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80' }
+];
+const TECH_TREE = [
+    { id: 'fire', name: '불의 발견', cost: 10, type: 'sci', ageReq: 0, unlocks: 'ancient', desc: '고대 시대로 진입' },
+    { id: 'tools', name: '석기 도구', cost: 20, type: 'sci', ageReq: 0, effect: 'prod_eff', desc: '생산 효율 2배' },
+    { id: 'farming', name: '농경 시작', cost: 100, type: 'sci', ageReq: 1, effect: 'food_eff', desc: '식량 효율 2배' },
+    { id: 'writing', name: '문자 발명', cost: 200, type: 'sci', ageReq: 1, unlocks: 'medieval', desc: '중세 시대로 진입' },
+    { id: 'steel', name: '강철 제련', cost: 500, type: 'sci', ageReq: 2, effect: 'prod_eff', desc: '생산 효율 2배' },
+    { id: 'printing', name: '인쇄술', cost: 800, type: 'sci', ageReq: 2, unlocks: 'industrial', desc: '산업 시대로 진입' },
+    { id: 'steam', name: '증기 기관', cost: 2000, type: 'sci', ageReq: 3, effect: 'auto_prod', desc: '자동 생산력 증가' },
+    { id: 'electricity', name: '전기', cost: 3500, type: 'sci', ageReq: 3, unlocks: 'modern', desc: '현대 시대로 진입' },
+    { id: 'computer', name: '컴퓨터', cost: 8000, type: 'sci', ageReq: 4, effect: 'sci_eff', desc: '과학 효율 2배' },
+    { id: 'rocketry', name: '로켓 공학', cost: 15000, type: 'sci', ageReq: 4, unlocks: 'space', desc: '우주 시대로 진입' },
+    { id: 'ftl', name: '초광속 여행', cost: 50000, type: 'sci', ageReq: 5, unlocks: 'win', desc: '승리' }
+];
+const BUILDINGS = {
+    farm: { name: '농장/채집지', cost: { food: 10, prod: 0, sci: 0 }, output: { food: 1, prod: 0, sci: 0 }, desc: '식량 생산' },
+    mine: { name: '광산/공장', cost: { food: 20, prod: 10, sci: 0 }, output: { food: 0, prod: 1, sci: 0 }, desc: '생산력 생산' },
+    lab: { name: '연구소', cost: { food: 50, prod: 50, sci: 0 }, output: { food: 0, prod: 0, sci: 1 }, desc: '과학 생산' }
+};
+
+const SLOT_PREFIX = 'civ_save_slot_';
+const SLOT_COUNT = 3;
+
+// --- 서브 컴포넌트 ---
+function SaveLoadModal({ mode, onClose, onAction, slots }) {
+    return (
+        <div className="modal-overlay animate-fade-in">
+            <div className="modal">
+                <div className="modal-header">
+                    <h3 className="modal-title">
+                        {mode === 'save' ? <Save size={20} className="icon-blue" /> : <FilePlus size={20} className="icon-green" />}
+                        {mode === 'save' ? '게임 저장' : '게임 불러오기'}
+                    </h3>
+                    <button onClick={onClose} className="modal-close"><X size={20} /></button>
+                </div>
+                <div className="modal-body">
+                    <div className="slot-list">
+                        {Array.from({ length: SLOT_COUNT }).map((_, idx) => {
+                            const slotId = idx + 1;
+                            const data = slots[slotId];
+                            const race = data ? RACES.find(r => r.id === data.selectedRaceId) : null;
+
+                            return (
+                                <div key={slotId}
+                                    onClick={() => onAction(slotId)}
+                                    className={`slot-card ${data ? 'has-data' : 'empty'}`}>
+                                    <div className="slot-content">
+                                        <div className="slot-number">#{slotId}</div>
+                                        {data ? (
+                                            <div className="slot-info">
+                                                <div className="slot-icon">{race ? race.icon : <User />}</div>
+                                                <div>
+                                                    <div className="slot-race">{race ? race.name : '알 수 없음'}</div>
+                                                    <div className="slot-meta">{AGES[data.currentAge].name} • {new Date(data.timestamp).toLocaleString()}</div>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="slot-empty-text">비어 있음</div>
+                                        )}
+                                    </div>
+                                    {mode === 'save' && <div className="slot-action save">{data ? '덮어쓰기' : '저장하기'}</div>}
+                                    {mode === 'load' && data && <div className="slot-action load">불러오기</div>}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function UpgradeModal({ onClose, buildings, buildingLevels, resources, onUpgrade, getUpgradeCost }) {
+    return (
+        <div className="modal-overlay animate-fade-in">
+            <div className="modal-lg">
+                <div className="modal-header">
+                    <h3 className="modal-title">
+                        <Wrench size={20} className="icon-purple" /> 시설 기술 강화
+                    </h3>
+                    <button onClick={onClose} className="modal-close"><X size={20} /></button>
+                </div>
+                <div className="modal-body padded">
+                    <p className="upgrade-intro">
+                        건물의 기본 생산 효율을 영구적으로 증가시킵니다. <br />
+                        <span className="highlight">레벨당 +20% 추가 효율</span>
+                    </p>
+                    <div className="upgrade-list">
+                        {Object.keys(BUILDINGS).map(key => {
+                            const currentLevel = buildingLevels[key] || 0;
+                            const costSci = getUpgradeCost(key);
+                            const canAfford = resources.sci >= costSci;
+                            const isMax = currentLevel >= 10;
+
+                            return (
+                                <div key={key} className="upgrade-item">
+                                    <div className="upgrade-item-header">
+                                        <div className="item-name">{BUILDINGS[key].name}</div>
+                                        <div className="item-level">Lv.{currentLevel} <span className="arrow">→</span> Lv.{currentLevel + 1}</div>
+                                    </div>
+                                    <div className="upgrade-item-footer">
+                                        <div className="item-efficiency">
+                                            효율: <span className="current">{100 + currentLevel * 20}%</span>
+                                            {!isMax && <span className="next">→ {100 + (currentLevel + 1) * 20}% <ArrowUp size={10} /></span>}
+                                        </div>
+                                        {isMax ? (
+                                            <button className="upgrade-action-btn maxed">최대 레벨</button>
+                                        ) : (
+                                            <button
+                                                onClick={() => onUpgrade(key)}
+                                                disabled={!canAfford}
+                                                className={`upgrade-action-btn ${canAfford ? 'affordable' : 'unaffordable'}`}>
+                                                <span className="cost">비용: <FlaskConical size={12} className="icon-blue" /> {costSci.toLocaleString()}</span>
+                                                <ArrowUp size={12} />
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function RaceSelectionScreen({ onSelect, onLoad }) {
+    return (
+        <div className="selection-screen">
+            <div className="selection-header animate-fade-in">
+                <h1 className="selection-title">문명 시뮬레이션</h1>
+                <p className="selection-subtitle">당신의 문명을 선택하여 우주 시대로 이끄십시오.</p>
+            </div>
+
+            <div className="guide-box animate-fade-in">
+                <h3 className="guide-title">
+                    <Scroll size={20} className="icon-blue" /> 게임 가이드
+                </h3>
+                <div className="guide-grid">
+                    <div className="guide-item"><div className="guide-icon icon-text-yellow"><Wheat size={16} /></div><div><strong>자원 관리</strong>식량(유지), 생산(건설), 과학(연구) 3가지 자원을 모아 문명을 발전시키세요.</div></div>
+                    <div className="guide-item"><div className="guide-icon icon-text-blue"><FlaskConical size={16} /></div><div><strong>시대 발전</strong>기술을 연구하여 원시 시대부터 우주 시대까지 6단계의 시대를 거쳐야 합니다.</div></div>
+                    <div className="guide-item"><div className="guide-icon icon-text-yellow"><Crown size={16} /></div><div><strong>불가사의 건설</strong>각 종족 고유의 '불가사의'를 건설하면 영구적이고 강력한 보너스를 얻습니다.</div></div>
+                    <div className="guide-item"><div className="guide-icon icon-text-red"><Flame size={16} /></div><div><strong>재해 대비</strong>무작위로 발생하는 재해는 자원이나 건물을 파괴할 수 있습니다.</div></div>
+                </div>
+            </div>
+
+            <div className="load-game-btn animate-fade-in">
+                <button onClick={onLoad}>
+                    <FilePlus size={20} /> 저장된 게임 불러오기
+                </button>
+            </div>
+
+            <div className="race-grid animate-fade-in">
+                {RACES.map(race => (
+                    <div key={race.id} onClick={() => onSelect(race)} className="race-card">
+                        <div className="race-icon">{race.icon}</div>
+                        <h2 className="race-name">{race.name}</h2>
+                        <p className="race-desc">{race.desc}</p>
+                        <div className="race-stats">
+                            <div className="stat-row"><span className="stat-label">식량 효율</span> <span className={`stat-value ${race.bonus.food > 1 ? 'positive' : race.bonus.food < 1 ? 'negative' : 'neutral'}`}>{race.bonus.food * 100}%</span></div>
+                            <div className="stat-row"><span className="stat-label">생산 효율</span> <span className={`stat-value ${race.bonus.prod > 1 ? 'positive' : race.bonus.prod < 1 ? 'negative' : 'neutral'}`}>{race.bonus.prod * 100}%</span></div>
+                            <div className="stat-row"><span className="stat-label">과학 효율</span> <span className={`stat-value ${race.bonus.sci > 1 ? 'positive' : race.bonus.sci < 1 ? 'negative' : 'neutral'}`}>{race.bonus.sci * 100}%</span></div>
+                        </div>
+                        <div className="race-start">새 게임 시작</div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function VictoryScreen({ onRestart }) {
+    return (
+        <div className="victory-screen">
+            <div className="victory-bg"></div>
+            <div className="victory-content animate-fade-in">
+                <Rocket size={80} className="victory-icon" />
+                <h1 className="victory-title">우주 시대 도달</h1>
+                <p className="victory-text">당신의 문명은 지구의 한계를 넘어 별들을 향해 나아갑니다.<br />위대한 여정의 새로운 시작입니다.</p>
+                <button onClick={onRestart} className="victory-btn">메인 화면으로</button>
+            </div>
+        </div>
+    );
+}
+
+function ResourceCard({ icon, label, value, rate }) {
+    return (
+        <div className="resource-card">
+            <div className="resource-label">{icon} {label}</div>
+            <div className="resource-value">{Math.floor(value).toLocaleString()}</div>
+            <div className="resource-rate">+{rate.toFixed(1)}/초</div>
+        </div>
+    );
+}
+
+function ActionButton({ onClick, icon, label, desc, colorClass }) {
+    return (
+        <button onClick={onClick} className={`action-btn ${colorClass}`}>
+            <div className="btn-icon">{icon}</div>
+            <div className="btn-content">
+                <div className="btn-label">{label}</div>
+                <div className="btn-desc">{desc}</div>
+            </div>
+        </button>
+    );
+}
+
+function SectionTitle({ title }) {
+    return <h2 className="section-title">{title}</h2>;
+}
+
+function App() {
+    const [gameState, setGameState] = useState('selection');
+    const [selectedRace, setSelectedRace] = useState(null);
+    const { initAudio, playSound, isMuted, toggleMute } = useSound();
+    const [resources, setResources] = useState({ food: 0, prod: 0, sci: 0 });
+    const [buildings, setBuildings] = useState({ farm: 0, mine: 0, lab: 0 });
+    const [buildingLevels, setBuildingLevels] = useState({ farm: 0, mine: 0, lab: 0 });
+    const [currentAge, setCurrentAge] = useState(0);
+    const [researched, setResearched] = useState([]);
+    const [logs, setLogs] = useState(["문명의 여명이 밝았습니다."]);
+    const [multipliers, setMultipliers] = useState({ food: 1, prod: 1, sci: 1 });
+    const [hasWonder, setHasWonder] = useState(false);
+    const [disasterActive, setDisasterActive] = useState(false);
+    const [currentSlot, setCurrentSlot] = useState(null);
+    const [slotsData, setSlotsData] = useState({});
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalMode, setModalMode] = useState('save');
+    const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
+    const [isFullScreen, setIsFullScreen] = useState(false);
+
+    const refreshSlots = () => {
+        const loaded = {};
+        for (let i = 1; i <= SLOT_COUNT; i++) {
+            const saved = localStorage.getItem(SLOT_PREFIX + i);
+            if (saved) loaded[i] = JSON.parse(saved);
+        }
+        setSlotsData(loaded);
+    };
+
+    useEffect(() => { refreshSlots(); }, []);
+
+    const toggleFullScreen = () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch((e) => {
+                console.error(`Error attempting to enable full-screen mode: ${e.message} (${e.name})`);
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    };
+
+    useEffect(() => {
+        const handleFullScreenChange = () => {
+            setIsFullScreen(!!document.fullscreenElement);
+        };
+        document.addEventListener('fullscreenchange', handleFullScreenChange);
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullScreenChange);
+        };
+    }, []);
+
+    const triggerDisaster = useCallback(() => {
+        const possibleDisasters = DISASTERS_BY_AGE[currentAge];
+        if (!possibleDisasters || possibleDisasters.length === 0) return;
+
+        const disaster = possibleDisasters[Math.floor(Math.random() * possibleDisasters.length)];
+        let msg = `[재해] ${disaster.desc}`;
+
+        setDisasterActive(true);
+        playSound('disaster');
+        setTimeout(() => setDisasterActive(false), 500);
+
+        if (disaster.type === 'resource') {
+            setResources(prev => ({
+                ...prev,
+                [disaster.target]: Math.max(0, Math.floor(prev[disaster.target] * (1 - disaster.ratio)))
+            }));
+        } else if (disaster.type === 'building') {
+            setBuildings(prev => ({
+                ...prev,
+                [disaster.target]: Math.max(0, prev[disaster.target] - disaster.count)
+            }));
+        } else if (disaster.type === 'building_all') {
+            setBuildings(prev => {
+                const next = { ...prev };
+                Object.keys(next).forEach(k => next[k] = Math.max(0, next[k] - 1));
+                return next;
+            });
+        }
+
+        setLogs(prev => [msg, ...prev].slice(0, 50));
+    }, [currentAge, playSound]);
+
+    useEffect(() => {
+        if (gameState !== 'playing') return;
+        const interval = setInterval(() => {
+            setResources(prev => {
+                const raceBonus = selectedRace.bonus;
+                const getEff = (type) => 1 + (buildingLevels[type] || 0) * 0.2;
+
+                const autoFood = buildings.farm * 1 * raceBonus.food * multipliers.food * getEff('farm');
+                const autoProd = buildings.mine * 1 * raceBonus.prod * multipliers.prod * getEff('mine');
+                const autoSci = buildings.lab * 1 * raceBonus.sci * multipliers.sci * getEff('lab');
+                return {
+                    food: prev.food + autoFood,
+                    prod: prev.prod + autoProd,
+                    sci: prev.sci + autoSci
+                };
+            });
+
+            if (Math.random() < 0.005) {
+                triggerDisaster();
+            }
+
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [gameState, buildings, buildingLevels, selectedRace, multipliers, triggerDisaster]);
+
+    useEffect(() => {
+        if (gameState !== 'playing' || !currentSlot) return;
+        const saveInterval = setInterval(() => {
+            saveToSlot(currentSlot, true);
+        }, 30000);
+        return () => clearInterval(saveInterval);
+    }, [gameState, currentSlot, selectedRace, resources, buildings, buildingLevels, currentAge, researched, multipliers, hasWonder, logs]);
+
+    const addLog = (msg) => {
+        setLogs(prev => [msg, ...prev].slice(0, 50));
+    };
+
+    const saveToSlot = (slotId, silent = false) => {
+        if (!selectedRace) return;
+        const data = {
+            selectedRaceId: selectedRace.id,
+            resources,
+            buildings,
+            buildingLevels,
+            currentAge,
+            researched,
+            multipliers,
+            hasWonder,
+            logs,
+            timestamp: Date.now()
+        };
+        localStorage.setItem(SLOT_PREFIX + slotId, JSON.stringify(data));
+
+        if (!silent) {
+            addLog(`게임이 슬롯 ${slotId}번에 저장되었습니다.`);
+            playSound('build');
+            refreshSlots();
+            setCurrentSlot(slotId);
+            setIsModalOpen(false);
+        }
+    };
+
+    const loadFromSlot = (slotId) => {
+        const data = slotsData[slotId];
+        if (!data) return;
+
+        const race = RACES.find(r => r.id === data.selectedRaceId);
+        if (race) setSelectedRace(race);
+
+        setResources(data.resources);
+        setBuildings({ ...{ farm: 0, mine: 0, lab: 0 }, ...data.buildings });
+        setBuildingLevels({ ...{ farm: 0, mine: 0, lab: 0 }, ...data.buildingLevels });
+        setCurrentAge(data.currentAge);
+        setResearched(data.researched);
+        setMultipliers(data.multipliers);
+        setHasWonder(data.hasWonder);
+        setLogs(data.logs);
+
+        setCurrentSlot(slotId);
+        setGameState('playing');
+        initAudio();
+        setIsModalOpen(false);
+    };
+
+    const goHome = () => {
+        if (currentSlot) saveToSlot(currentSlot, true);
+        setGameState('selection');
+        setCurrentSlot(null);
+    };
+
+    const startGame = (race) => {
+        initAudio();
+        setSelectedRace(race);
+        setGameState('playing');
+        setCurrentSlot(null);
+        setResources({ food: 0, prod: 0, sci: 0 });
+        setBuildings({ farm: 0, mine: 0, lab: 0 });
+        setBuildingLevels({ farm: 0, mine: 0, lab: 0 });
+        setCurrentAge(0);
+        setResearched([]);
+        setMultipliers({ food: 1, prod: 1, sci: 1 });
+        setHasWonder(false);
+        setLogs([`${race.name} 종족으로 역사를 시작합니다.`]);
+        playSound('research');
+    };
+
+    const openSaveModal = () => {
+        refreshSlots();
+        setModalMode('save');
+        setIsModalOpen(true);
+    };
+
+    const openLoadModal = () => {
+        refreshSlots();
+        setModalMode('load');
+        setIsModalOpen(true);
+    };
+
+    const handleSlotAction = (slotId) => {
+        if (modalMode === 'save') {
+            if (slotsData[slotId] && !confirm(`슬롯 ${slotId}번에 덮어쓰시겠습니까?`)) return;
+            saveToSlot(slotId);
+        } else {
+            if (!slotsData[slotId]) return;
+            loadFromSlot(slotId);
+        }
+    };
+
+    const calculateClickValue = (type) => {
+        if (!selectedRace) return 1;
+        const bonus = selectedRace.bonus[type] || 1;
+        const mult = multipliers[type] || 1;
+        const baseAmount = 1 + (currentAge * 1);
+        return baseAmount * bonus * mult;
+    };
+
+    const gather = (type) => {
+        playSound('click');
+        setResources(prev => {
+            const amount = calculateClickValue(type);
+            return { ...prev, [type]: prev[type] + amount };
+        });
+    };
+
+    const buyBuilding = (type) => {
+        const building = BUILDINGS[type];
+        const count = buildings[type];
+        const costFood = Math.floor(building.cost.food * Math.pow(1.15, count));
+        const costProd = Math.floor(building.cost.prod * Math.pow(1.15, count));
+        const costSci = Math.floor(building.cost.sci * Math.pow(1.15, count));
+
+        if (resources.food >= costFood && resources.prod >= costProd && resources.sci >= costSci) {
+            playSound('build');
+            setResources(prev => ({
+                ...prev,
+                food: prev.food - costFood,
+                prod: prev.prod - costProd,
+                sci: prev.sci - costSci
+            }));
+            setBuildings(prev => ({ ...prev, [type]: prev[type] + 1 }));
+            addLog(`${building.name} 건설 완료!`);
+        } else {
+            playSound('error');
+            addLog("자원이 부족합니다.");
+        }
+    };
+
+    const upgradeBuilding = (type) => {
+        const currentLevel = buildingLevels[type] || 0;
+        if (currentLevel >= 10) return;
+
+        const costSci = getUpgradeCost(type);
+
+        if (resources.sci >= costSci) {
+            playSound('upgrade');
+            setResources(prev => ({ ...prev, sci: prev.sci - costSci }));
+            setBuildingLevels(prev => ({ ...prev, [type]: currentLevel + 1 }));
+            addLog(`${BUILDINGS[type].name} 기술 강화 완료 (Lv.${currentLevel + 1})`);
+        } else {
+            playSound('error');
+            addLog("과학력이 부족합니다.");
+        }
+    };
+
+    const buildWonder = () => {
+        if (hasWonder) return;
+        const wonder = WONDERS[selectedRace.id];
+        const cost = wonder.cost;
+
+        if (resources.food >= cost.food && resources.prod >= cost.prod && resources.sci >= cost.sci) {
+            playSound('wonder');
+            setResources(prev => ({
+                food: prev.food - cost.food,
+                prod: prev.prod - cost.prod,
+                sci: prev.sci - cost.sci
+            }));
+            setHasWonder(true);
+            addLog(`위대한 업적! [${wonder.name}] 건설 완료!`);
+
+            setMultipliers(prev => {
+                if (wonder.effect === 'all_boost') return { food: prev.food * 1.5, prod: prev.prod * 1.5, sci: prev.sci * 1.5 };
+                if (wonder.effect === 'prod_boost') return { ...prev, prod: prev.prod * 3.0 };
+                if (wonder.effect === 'sci_boost') return { ...prev, sci: prev.sci * 2.0 };
+                return prev;
+            });
+        } else {
+            playSound('error');
+            addLog("불가사의 건설 자원이 부족합니다.");
+        }
+    };
+
+    const research = (tech) => {
+        if (resources.sci >= tech.cost) {
+            setResources(prev => ({ ...prev, sci: prev.sci - tech.cost }));
+            setResearched(prev => [...prev, tech.id]);
+            addLog(`[기술] ${tech.name} 연구 완료!`);
+
+            if (tech.unlocks) {
+                if (tech.unlocks === 'win') {
+                    setGameState('victory');
+                    playSound('age');
+                } else {
+                    const nextAgeIdx = AGES.findIndex(a =>
+                        (tech.unlocks === 'ancient' && a.id === 1) ||
+                        (tech.unlocks === 'medieval' && a.id === 2) ||
+                        (tech.unlocks === 'industrial' && a.id === 3) ||
+                        (tech.unlocks === 'modern' && a.id === 4) ||
+                        (tech.unlocks === 'space' && a.id === 5)
+                    );
+                    if (nextAgeIdx !== -1) {
+                        setCurrentAge(nextAgeIdx);
+                        addLog(`>>> ${AGES[nextAgeIdx].name}로 진입했습니다! <<<`);
+                        playSound('age');
+                    } else {
+                        playSound('research');
+                    }
+                }
+            } else {
+                playSound('research');
+            }
+
+            if (tech.effect) {
+                setMultipliers(prev => {
+                    if (tech.effect === 'food_eff') return { ...prev, food: prev.food * 2 };
+                    if (tech.effect === 'prod_eff') return { ...prev, prod: prev.prod * 2 };
+                    if (tech.effect === 'sci_eff') return { ...prev, sci: prev.sci * 2 };
+                    return prev;
+                });
+            }
+        } else {
+            playSound('error');
+            addLog("과학력이 부족합니다.");
+        }
+    };
+
+    const getBuildingCost = (type) => {
+        const base = BUILDINGS[type].cost;
+        const count = buildings[type];
+        return {
+            food: Math.floor(base.food * Math.pow(1.15, count)),
+            prod: Math.floor(base.prod * Math.pow(1.15, count)),
+            sci: Math.floor(base.sci * Math.pow(1.15, count))
+        };
+    };
+
+    const getUpgradeCost = (type) => {
+        const currentLevel = buildingLevels[type] || 0;
+        return Math.floor(200 * Math.pow(1.1, currentLevel));
+    }
+
+
+    if (gameState === 'selection') {
+        return (
+            <>
+                <RaceSelectionScreen onSelect={startGame} onLoad={openLoadModal} />
+                {isModalOpen && <SaveLoadModal mode={modalMode} slots={slotsData} onClose={() => setIsModalOpen(false)} onAction={handleSlotAction} />}
+            </>
+        );
+    }
+
+    if (gameState === 'victory') {
+        return <VictoryScreen onRestart={goHome} />;
+    }
+
+    return (
+        <div className={`game-container ${disasterActive ? 'animate-shake disaster-flash' : ''}`}>
+            {isModalOpen && <SaveLoadModal mode={modalMode} slots={slotsData} onClose={() => setIsModalOpen(false)} onAction={handleSlotAction} />}
+            {isUpgradeModalOpen && <UpgradeModal onClose={() => setIsUpgradeModalOpen(false)} buildings={buildings} buildingLevels={buildingLevels} resources={resources} onUpgrade={upgradeBuilding} getUpgradeCost={getUpgradeCost} />}
+
+            {/* 상단 헤더 */}
+            <header
+                className="game-header header-bg"
+                style={{ backgroundImage: `url(${AGES[currentAge].img})` }}
+            >
+                <div className="header-overlay"></div>
+
+                {/* 컨트롤 버튼 그룹 */}
+                <div className="control-buttons">
+                    <button onClick={toggleFullScreen} title={isFullScreen ? "전체화면 종료" : "전체화면"} className="control-btn">
+                        {isFullScreen ? <Minimize size={18} /> : <Maximize size={18} />}
+                    </button>
+                    <button onClick={goHome} title="메인으로" className="control-btn">
+                        <Home size={18} />
+                    </button>
+                    <button onClick={openSaveModal} title="저장하기" className="control-btn">
+                        <Save size={18} />
+                    </button>
+                    <button onClick={toggleMute} title="음소거" className="control-btn">
+                        {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                    </button>
+                </div>
+
+                <div className="header-content">
+                    <div className="header-top">
+                        <div className="header-info">
+                            <div className={`age-icon ${AGES[currentAge].color}`}>
+                                <Globe size={32} />
+                            </div>
+                            <div>
+                                <h1 className={`age-title ${AGES[currentAge].color}`}>{AGES[currentAge].name}</h1>
+                                <p className="civ-info">
+                                    {selectedRace.name} 문명
+                                    <span className="info-badge">목표: 우주 진출</span>
+                                    {currentSlot && <span className="slot-badge">슬롯 {currentSlot}</span>}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="resource-bar">
+                        <ResourceCard icon={<Wheat size={20} className="icon-text-yellow" />} label="식량" value={resources.food} rate={buildings.farm * selectedRace.bonus.food * multipliers.food * (1 + buildingLevels.farm * 0.2)} />
+                        <ResourceCard icon={<Hammer size={20} className="icon-text-orange" />} label="생산력" value={resources.prod} rate={buildings.mine * selectedRace.bonus.prod * multipliers.prod * (1 + buildingLevels.mine * 0.2)} />
+                        <ResourceCard icon={<FlaskConical size={20} className="icon-text-blue" />} label="과학" value={resources.sci} rate={buildings.lab * selectedRace.bonus.sci * multipliers.sci * (1 + buildingLevels.lab * 0.2)} />
+                    </div>
+                </div>
+            </header>
+
+            {/* 메인 콘텐츠 */}
+            <div className="main-content">
+                {/* 왼쪽 패널 */}
+                <div className="panel-left">
+                    <div className="panel-inner">
+                        <SectionTitle title="기본 활동" />
+                        <div className="action-grid">
+                            <ActionButton
+                                onClick={() => gather('food')}
+                                icon={<Wheat size={18} />}
+                                label="식량 채집"
+                                desc={`+${Math.floor(calculateClickValue('food')).toLocaleString()} (클릭)`}
+                                colorClass="btn-food"
+                            />
+                            <ActionButton
+                                onClick={() => gather('prod')}
+                                icon={<Pickaxe size={18} />}
+                                label="자원 채굴"
+                                desc={`+${Math.floor(calculateClickValue('prod')).toLocaleString()} (클릭)`}
+                                colorClass="btn-prod"
+                            />
+                            <ActionButton
+                                onClick={() => gather('sci')}
+                                icon={<Scroll size={18} />}
+                                label="자연 관찰"
+                                desc={`+${Math.floor(calculateClickValue('sci')).toLocaleString()} (클릭)`}
+                                colorClass="btn-sci"
+                            />
+                        </div>
+
+                        <SectionTitle title="건물 건설" />
+                        <div className="building-list">
+                            {Object.keys(BUILDINGS).map(key => {
+                                const cost = getBuildingCost(key);
+                                const canAfford = resources.food >= cost.food && resources.prod >= cost.prod && resources.sci >= cost.sci;
+                                const outputName = key === 'farm' ? '식량' : key === 'mine' ? '생산' : '과학';
+                                const baseOutput = 1;
+                                const bonusOutput = baseOutput * ((buildingLevels[key] || 0) * 0.2);
+
+                                return (
+                                    <div key={key} onClick={() => buyBuilding(key)}
+                                        className={`building-card ${canAfford ? 'affordable' : 'unaffordable'}`}>
+                                        <div className="building-info">
+                                            <div className="building-name">
+                                                {BUILDINGS[key].name} (Lv.{buildings[key]})
+                                            </div>
+                                            <div className="building-cost">
+                                                비용:
+                                                {cost.food > 0 && <span className="cost-food"> 🌾{cost.food.toLocaleString()}</span>}
+                                                {cost.prod > 0 && <span className="cost-prod"> ⚒️{cost.prod.toLocaleString()}</span>}
+                                                {cost.sci > 0 && <span className="cost-sci"> 🧪{cost.sci.toLocaleString()}</span>}
+                                            </div>
+                                        </div>
+                                        <div className="building-output">
+                                            <div className="output-value">
+                                                +{baseOutput}
+                                                {bonusOutput > 0 && <span className="output-bonus">(+{bonusOutput.toFixed(1)})</span>}
+                                            </div>
+                                            <div className="output-label">{outputName}/초 (개당)</div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* 업그레이드 버튼 */}
+                        <button onClick={() => setIsUpgradeModalOpen(true)} className="upgrade-btn">
+                            <div className="flex items-center gap-3">
+                                <div className="upgrade-icon">
+                                    <Wrench size={20} />
+                                </div>
+                                <div className="upgrade-info">
+                                    <div className="upgrade-title">시설 기술 강화</div>
+                                    <div className="upgrade-desc">건물 생산 효율 영구 증가</div>
+                                </div>
+                            </div>
+                            <ArrowUp size={16} className="upgrade-arrow" />
+                        </button>
+
+                        <SectionTitle title="불가사의" />
+                        {hasWonder ? (
+                            <div className="wonder-complete wonder-glow">
+                                <Crown size={32} className="wonder-icon" />
+                                <div className="wonder-name">{WONDERS[selectedRace.id].name} 건설됨</div>
+                                <div className="wonder-effect">영구 효과 적용 중</div>
+                            </div>
+                        ) : (
+                            <div onClick={buildWonder}
+                                className={`wonder-card ${resources.food >= WONDERS[selectedRace.id].cost.food && resources.prod >= WONDERS[selectedRace.id].cost.prod && resources.sci >= WONDERS[selectedRace.id].cost.sci ? 'affordable' : 'unaffordable'}`}>
+                                <div className="wonder-content">
+                                    <div className="wonder-icon-wrapper">
+                                        <Crown size={24} />
+                                    </div>
+                                    <div className="wonder-details">
+                                        <div className="wonder-title">{WONDERS[selectedRace.id].name}</div>
+                                        <div className="wonder-desc">{WONDERS[selectedRace.id].desc}</div>
+                                        <div className="wonder-costs">
+                                            {WONDERS[selectedRace.id].cost.food > 0 && <div className={resources.food >= WONDERS[selectedRace.id].cost.food ? 'text-yellow' : 'text-red'}>식량: {WONDERS[selectedRace.id].cost.food.toLocaleString()}</div>}
+                                            {WONDERS[selectedRace.id].cost.prod > 0 && <div className={resources.prod >= WONDERS[selectedRace.id].cost.prod ? 'text-orange' : 'text-red'}>생산: {WONDERS[selectedRace.id].cost.prod.toLocaleString()}</div>}
+                                            {WONDERS[selectedRace.id].cost.sci > 0 && <div className={resources.sci >= WONDERS[selectedRace.id].cost.sci ? 'text-blue' : 'text-red'}>과학: {WONDERS[selectedRace.id].cost.sci.toLocaleString()}</div>}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* 중앙 패널 */}
+                <div className="panel-center">
+                    <div className="log-overlay"></div>
+                    <div className="log-header">
+                        <SectionTitle title="역사의 기록" />
+                    </div>
+                    <div className="log-content">
+                        {logs.map((log, i) => (
+                            <div key={i} className={`log-entry animate-fade-in ${log.includes('>>>') ? 'log-age' : ''}`}>
+                                {!log.includes('>>>') && <span className="log-number">[{logs.length - i}]</span>}
+                                <span className={`${log.includes('[재해]') ? 'log-disaster' : ''} ${log.includes('[기술]') ? 'log-tech' : ''}`}>
+                                    {log}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* 오른쪽 패널 */}
+                <div className="panel-right">
+                    <div className="panel-inner">
+                        <SectionTitle title="기술 발전표" />
+                        <div className="tech-list">
+                            {TECH_TREE.map((tech) => {
+                                const isResearched = researched.includes(tech.id);
+                                const isAvailable = !isResearched && tech.ageReq <= currentAge;
+                                const canAfford = resources.sci >= tech.cost;
+
+                                if (!isResearched && tech.ageReq > currentAge) return null;
+
+                                return (
+                                    <div key={tech.id} onClick={() => isAvailable && canAfford ? research(tech) : null}
+                                        className={`tech-card ${isResearched ? 'researched' : 'available'} ${!isResearched && canAfford ? 'affordable' : !isResearched ? 'unaffordable' : ''}`}>
+                                        <div className="tech-header">
+                                            <h3 className={`tech-name ${isResearched ? 'researched' : 'available'}`}>{tech.name}</h3>
+                                            {isResearched ? <Zap size={16} className="tech-icon researched" /> : <FlaskConical size={16} className="tech-icon available" />}
+                                        </div>
+                                        <p className="tech-desc">{tech.desc}</p>
+                                        {!isResearched && (
+                                            <div className={`tech-cost ${canAfford ? 'affordable' : 'unaffordable'}`}>
+                                                필요 과학: {tech.cost.toLocaleString()}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                            {researched.length === TECH_TREE.length && <div className="tech-complete-msg">모든 기술을 연구했습니다.</div>}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);

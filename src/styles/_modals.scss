@@ -1,0 +1,289 @@
+// ========================================
+// Modal Styles
+// ========================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// Modal overlay
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    @include flex-center;
+    z-index: 50;
+    padding: $spacing-4;
+}
+
+// Modal base
+.modal {
+    background-color: $slate-800;
+    border-radius: $radius-xl;
+    border: 1px solid $slate-600;
+    max-width: 28rem;
+    width: 100%;
+    @include shadow-2xl;
+    overflow: hidden;
+}
+
+.modal-lg {
+    @extend .modal;
+    max-width: 32rem;
+}
+
+.modal-header {
+    padding: $spacing-4;
+    border-bottom: 1px solid $slate-700;
+    @include flex-between;
+    background-color: rgba($slate-900, 0.5);
+
+    .modal-title {
+        font-weight: 700;
+        font-size: $text-lg;
+        color: $text-primary;
+        display: flex;
+        align-items: center;
+        gap: $spacing-2;
+    }
+
+    .modal-close {
+        padding: $spacing-1;
+        border-radius: $radius-md;
+        background: transparent;
+        border: none;
+        color: $text-primary;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
+}
+
+.modal-body {
+    padding: $spacing-4;
+
+    &.padded {
+        padding: $spacing-6;
+    }
+}
+
+// Save/Load slot cards
+.slot-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+}
+
+.slot-card {
+    padding: $spacing-4;
+    border-radius: $radius-lg;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.2s;
+    @include flex-between;
+
+    &:hover {
+        transform: scale(1.02);
+    }
+
+    &.has-data {
+        background-color: $slate-700;
+        border-color: $slate-500;
+
+        &:hover {
+            border-color: $blue-400;
+        }
+    }
+
+    &.empty {
+        background-color: rgba($slate-800, 0.5);
+        border-color: $slate-700;
+        border-style: dashed;
+
+        &:hover {
+            border-color: $slate-500;
+        }
+    }
+}
+
+.slot-content {
+    display: flex;
+    align-items: center;
+    gap: $spacing-4;
+
+    .slot-number {
+        font-size: $text-2xl;
+        font-family: $font-mono;
+        color: $slate-500;
+        width: 1.5rem;
+    }
+
+    .slot-info {
+        display: flex;
+        align-items: center;
+        gap: $spacing-3;
+
+        .slot-icon {
+            color: $blue-400;
+        }
+
+        .slot-race {
+            font-weight: 700;
+            color: $slate-200;
+        }
+
+        .slot-meta {
+            font-size: $text-xs;
+            color: $slate-400;
+        }
+    }
+
+    .slot-empty-text {
+        color: $slate-500;
+        font-style: italic;
+    }
+}
+
+.slot-action {
+    font-size: $text-xs;
+    font-weight: 700;
+
+    &.save {
+        color: $blue-400;
+    }
+
+    &.load {
+        color: $green-400;
+    }
+}
+
+// Upgrade modal
+.upgrade-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+}
+
+.upgrade-intro {
+    font-size: $text-sm;
+    color: $slate-400;
+    margin-bottom: $spacing-4;
+
+    .highlight {
+        color: $purple-400;
+    }
+}
+
+.upgrade-item {
+    background-color: rgba($slate-700, 0.5);
+    border-radius: $radius-lg;
+    padding: $spacing-4;
+    border: 1px solid $slate-600;
+
+    .upgrade-item-header {
+        @include flex-between;
+        margin-bottom: $spacing-2;
+
+        .item-name {
+            font-weight: 700;
+            color: $slate-200;
+        }
+
+        .item-level {
+            font-size: $text-sm;
+            font-family: $font-mono;
+            color: $purple-300;
+
+            .arrow {
+                color: $slate-500;
+            }
+        }
+    }
+
+    .upgrade-item-footer {
+        @include flex-between;
+
+        .item-efficiency {
+            font-size: $text-xs;
+            color: $slate-400;
+            display: flex;
+            align-items: center;
+            gap: $spacing-2;
+
+            .current {
+                color: $text-primary;
+            }
+
+            .next {
+                color: $green-400;
+                display: flex;
+                align-items: center;
+                gap: $spacing-1;
+            }
+        }
+    }
+}
+
+.upgrade-action-btn {
+    padding: $spacing-1 $spacing-3;
+    border-radius: $radius-md;
+    font-size: $text-xs;
+    font-weight: 700;
+    transition: background-color 0.2s;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+
+    &.affordable {
+        background-color: $purple-600;
+        color: $text-primary;
+
+        &:hover {
+            background-color: $purple-500;
+        }
+    }
+
+    &.unaffordable {
+        background-color: $slate-600;
+        color: $slate-400;
+        cursor: not-allowed;
+    }
+
+    &.maxed {
+        background-color: $slate-600;
+        color: $slate-400;
+        cursor: not-allowed;
+    }
+
+    .cost {
+        opacity: 0.8;
+        display: flex;
+        align-items: center;
+        gap: $spacing-1;
+    }
+}
+
+// Icon colors in modals
+.icon-blue {
+    color: $blue-400;
+}
+
+.icon-green {
+    color: $green-400;
+}
+
+.icon-purple {
+    color: $purple-400;
+}
+
+.icon-yellow {
+    color: $yellow-400;
+}
+
+.icon-orange {
+    color: $orange-400;
+}
