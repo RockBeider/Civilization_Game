@@ -8,7 +8,6 @@ import {
 import { ResourceCard, ActionButton, SectionTitle } from './components/ui/BasicComponents';
 import { SaveLoadModal } from './components/ui/SaveLoadModal';
 import { UpgradeModal } from './components/ui/UpgradeModal';
-import { TechTreeModal } from './components/ui/TechTreeModal';
 import { RaceSelectionScreen } from './components/screens/RaceSelectionScreen';
 import { VictoryScreen } from './components/screens/VictoryScreen';
 import { useSound } from './hooks/useSound';
@@ -35,7 +34,6 @@ function App() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState('save');
     const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
-    const [showTechTree, setShowTechTree] = useState(false);
     const [isFullScreen, setIsFullScreen] = useState(false);
 
     const refreshSlots = () => {
@@ -415,16 +413,6 @@ function App() {
         <div className={`game-container ${disasterActive ? 'animate-shake disaster-flash' : ''}`}>
             {isModalOpen && <SaveLoadModal mode={modalMode} slots={slotsData} onClose={() => setIsModalOpen(false)} onAction={handleSlotAction} />}
             {isUpgradeModalOpen && <UpgradeModal onClose={() => setIsUpgradeModalOpen(false)} buildings={buildings} buildingLevels={buildingLevels} resources={resources} onUpgrade={upgradeBuilding} getUpgradeCost={getUpgradeCost} />}
-            {showTechTree && (
-                <TechTreeModal
-                    onClose={() => setShowTechTree(false)}
-                    researched={researched}
-                    resources={resources}
-                    currentAge={currentAge}
-                    onResearch={research}
-                    selectedRace={selectedRace}
-                />
-            )}
 
             {/* 상단 헤더 */}
             <header
@@ -607,15 +595,62 @@ function App() {
                     <div className="panel-inner">
                         <SectionTitle title="기술 발전표" />
                         <div className="tech-list">
-                            <button onClick={() => setShowTechTree(true)} className="action-btn btn-sci" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', padding: '16px' }}>
-                                <div className="btn-icon">
-                                    <FlaskConical size={24} className="text-white" />
-                                </div>
-                                <div className="btn-content" style={{ marginLeft: '12px' }}>
-                                    <div className="btn-label" style={{ fontSize: '1.2rem' }}>기술 연구소</div>
-                                    <div className="btn-desc">기술 트리를 확인하고 연구합니다</div>
-                                </div>
-                            </button>
+                            {TECH_TREE.map((tech) => {
+                                const isResearched = researched.includes(tech.id);
+                                const isAvailable = !isResearched && tech.ageReq <= currentAge;
+
+                                // Logic for dependencies
+                                let isLocked = false;
+                                let missingReqs = [];
+
+                                if (tech.reqTech) {
+                                    const reqs = Array.isArray(tech.reqTech) ? tech.reqTech : [tech.reqTech];
+                                    reqs.forEach(reqId => {
+                                        if (!researched.includes(reqId)) {
+                                            isLocked = true;
+                                            const req = TECH_TREE.find(t => t.id === reqId);
+                                            missingReqs.push(req ? req.name : reqId);
+                                        }
+                                    });
+                                }
+
+                                const canAfford = resources.sci >= tech.cost;
+
+                                // Filter by race
+                                if (tech.reqRace && tech.reqRace !== selectedRace.id) return null;
+
+                                if (!isResearched && tech.ageReq > currentAge) return null;
+
+                                return (
+                                    <div key={tech.id}
+                                        onClick={() => isAvailable && canAfford && !isLocked ? research(tech) : null}
+                                        className={`tech-card ${isResearched ? 'researched' : 'available'} ${isLocked ? 'locked' : (!isResearched && canAfford ? 'affordable' : !isResearched ? 'unaffordable' : '')}`}
+                                        style={tech.img ? { backgroundImage: `url(${tech.img})` } : {}}
+                                    >
+                                        <div className="tech-overlay"></div>
+                                        <div className="tech-content-wrapper">
+                                            <div className="tech-header">
+                                                <h3 className={`tech-name ${isResearched ? 'researched' : 'available'}`}>{tech.name}</h3>
+                                                {isResearched ? <Zap size={16} className="tech-icon researched" /> : <FlaskConical size={16} className="tech-icon available" />}
+                                            </div>
+                                            <p className="tech-desc">{tech.desc}</p>
+
+                                            {!isResearched && isLocked && (
+                                                <div className="tech-req">
+                                                    🔒 필요: {missingReqs.join(', ')}
+                                                </div>
+                                            )}
+
+                                            {!isResearched && !isLocked && (
+                                                <div className={`tech-cost ${canAfford ? 'affordable' : 'unaffordable'}`}>
+                                                    필요 과학: {tech.cost.toLocaleString()}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                            {researched.length === TECH_TREE.length && <div className="tech-complete-msg">모든 기술을 연구했습니다.</div>}
                         </div>
                     </div>
                 </div>

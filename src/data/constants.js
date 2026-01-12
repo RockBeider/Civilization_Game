@@ -59,31 +59,31 @@ import techRocketry from '../assets/techs/rocketry.png';
 import techFtl from '../assets/techs/ftl.png';
 
 export const TECH_TREE = [
-    { id: 'tools', name: '석기 도구', cost: 20, type: 'sci', ageReq: 0, row: 2, effect: 'prod_eff', desc: '생산 효율 2배', img: techTools },
-    { id: 'irrigation', name: '관개 수로', cost: 60, type: 'sci', ageReq: 0, row: 0, effect: 'food_eff', desc: '식량 효율 2배', img: techIrrigation },
-    { id: 'fire', name: '불의 발견', cost: 10, type: 'sci', ageReq: 0, row: 1, unlocks: 'ancient', desc: '고대 시대로 진입', img: techFire },
+    { id: 'tools', name: '석기 도구', cost: 20, type: 'sci', ageReq: 0, effect: 'prod_eff', desc: '생산 효율 2배', img: techTools },
+    { id: 'irrigation', name: '관개 수로', cost: 60, type: 'sci', ageReq: 0, effect: 'food_eff', desc: '식량 효율 2배', img: techIrrigation },
+    { id: 'fire', name: '불의 발견', cost: 10, type: 'sci', ageReq: 0, unlocks: 'ancient', desc: '고대 시대로 진입', img: techFire },
 
-    { id: 'farming', name: '농경 시작', cost: 100, type: 'sci', ageReq: 1, row: 0, reqTech: 'irrigation', effect: 'food_eff', desc: '식량 효율 2배', img: techFarming },
-    { id: 'mathematics', name: '수학', cost: 300, type: 'sci', ageReq: 1, row: 1, reqTech: 'fire', effect: 'sci_eff', desc: '과학 효율 2배', img: techMathematics },
-    { id: 'heavy_mining', name: '중채굴', cost: 300, type: 'sci', ageReq: 1, row: 2, reqTech: 'tools', reqRace: 'neanderthal', effect: 'prod_eff', desc: '생산 효율 2배 (네안데르탈인 전용)', img: techHeavyMining },
-    { id: 'crystal_power', name: '수정 에너지', cost: 300, type: 'sci', ageReq: 1, row: 3, reqTech: 'mathematics', reqRace: 'atlantean', effect: 'sci_eff', desc: '과학 효율 2배 (아틀란티스인 전용)', img: techCrystalPower },
-    { id: 'writing', name: '문자 발명', cost: 200, type: 'sci', ageReq: 1, col: 1, row: 1, reqTech: 'mathematics', unlocks: 'medieval', desc: '중세 시대로 진입', img: techWriting },
+    { id: 'farming', name: '농경 시작', cost: 100, type: 'sci', ageReq: 1, reqTech: 'irrigation', effect: 'food_eff', desc: '식량 효율 2배', img: techFarming },
+    { id: 'mathematics', name: '수학', cost: 300, type: 'sci', ageReq: 1, reqTech: 'fire', effect: 'sci_eff', desc: '과학 효율 2배', img: techMathematics },
+    { id: 'heavy_mining', name: '중채굴', cost: 300, type: 'sci', ageReq: 1, reqTech: 'tools', reqRace: 'neanderthal', effect: 'prod_eff', desc: '생산 효율 2배 (네안데르탈인 전용)', img: techHeavyMining },
+    { id: 'crystal_power', name: '수정 에너지', cost: 300, type: 'sci', ageReq: 1, reqTech: 'mathematics', reqRace: 'atlantean', effect: 'sci_eff', desc: '과학 효율 2배 (아틀란티스인 전용)', img: techCrystalPower },
+    { id: 'writing', name: '문자 발명', cost: 200, type: 'sci', ageReq: 1, reqTech: 'mathematics', unlocks: 'medieval', desc: '중세 시대로 진입', img: techWriting },
 
-    { id: 'steel', name: '강철 제련', cost: 500, type: 'sci', ageReq: 2, row: 2, reqTech: 'tools', effect: 'prod_eff', desc: '생산 효율 2배', img: techSteel },
-    { id: 'governance', name: '통치 체제', cost: 1000, type: 'sci', ageReq: 2, row: 0, reqTech: 'farming', reqRace: 'human', effect: 'food_eff', desc: '식량/생산 효율 증가 (인간 전용)', img: techGovernance },
-    { id: 'printing', name: '인쇄술', cost: 800, type: 'sci', ageReq: 2, row: 1, reqTech: 'writing', unlocks: 'industrial', desc: '산업 시대로 진입', img: techPrinting },
+    { id: 'steel', name: '강철 제련', cost: 500, type: 'sci', ageReq: 2, reqTech: 'tools', effect: 'prod_eff', desc: '생산 효율 2배', img: techSteel },
+    { id: 'governance', name: '통치 체제', cost: 1000, type: 'sci', ageReq: 2, reqTech: 'farming', reqRace: 'human', effect: 'food_eff', desc: '식량/생산 효율 증가 (인간 전용)', img: techGovernance },
+    { id: 'printing', name: '인쇄술', cost: 800, type: 'sci', ageReq: 2, reqTech: 'writing', unlocks: 'industrial', desc: '산업 시대로 진입', img: techPrinting },
 
-    { id: 'biology', name: '생물학', cost: 2500, type: 'sci', ageReq: 3, row: 0, reqTech: 'farming', effect: 'food_eff', desc: '식량 효율 2배', img: techBiology },
-    { id: 'steam', name: '증기 기관', cost: 2000, type: 'sci', ageReq: 3, row: 2, reqTech: 'steel', effect: 'auto_prod', desc: '자동 생산력 증가', img: techSteam },
-    { id: 'warfare', name: '총력전', cost: 3000, type: 'sci', ageReq: 3, row: 3, reqTech: 'steam', reqRace: 'neanderthal', effect: 'prod_eff', desc: '생산 효율 3배 (네안데르탈인 전용)', img: techWarfare },
-    { id: 'electricity', name: '전기', cost: 3500, type: 'sci', ageReq: 3, row: 1, reqTech: 'printing', unlocks: 'modern', desc: '현대 시대로 진입', img: techElectricity },
+    { id: 'biology', name: '생물학', cost: 2500, type: 'sci', ageReq: 3, reqTech: 'farming', effect: 'food_eff', desc: '식량 효율 2배', img: techBiology },
+    { id: 'steam', name: '증기 기관', cost: 2000, type: 'sci', ageReq: 3, reqTech: 'steel', effect: 'auto_prod', desc: '자동 생산력 증가', img: techSteam },
+    { id: 'warfare', name: '총력전', cost: 3000, type: 'sci', ageReq: 3, reqTech: 'steam', reqRace: 'neanderthal', effect: 'prod_eff', desc: '생산 효율 3배 (네안데르탈인 전용)', img: techWarfare },
+    { id: 'electricity', name: '전기', cost: 3500, type: 'sci', ageReq: 3, reqTech: 'printing', unlocks: 'modern', desc: '현대 시대로 진입', img: techElectricity },
 
-    { id: 'internet', name: '인터넷', cost: 6000, type: 'sci', ageReq: 4, row: 1, reqTech: 'electricity', effect: 'sci_eff', desc: '과학 효율 2배', img: techInternet },
-    { id: 'globalization', name: '세계화', cost: 7000, type: 'sci', ageReq: 4, row: 0, reqTech: 'internet', reqRace: 'human', effect: 'all_eff', desc: '모든 효율 증가 (인간 전용)', img: techGlobalization },
-    { id: 'computer', name: '컴퓨터', cost: 8000, type: 'sci', ageReq: 4, row: 2, reqTech: 'internet', effect: 'sci_eff', desc: '과학 효율 2배', img: techComputer },
-    { id: 'time_warp', name: '시간 왜곡', cost: 7000, type: 'sci', ageReq: 4, row: 3, reqTech: 'computer', reqRace: 'atlantean', effect: 'sci_eff_3x', desc: '과학 효율 3배 (아틀란티스인 전용)', img: techTimeWarp },
-    { id: 'rocketry', name: '로켓 공학', cost: 15000, type: 'sci', ageReq: 4, col: 1, row: 2, reqTech: 'computer', unlocks: 'space', desc: '우주 시대로 진입', img: techRocketry },
-    { id: 'ftl', name: '초광속 여행', cost: 50000, type: 'sci', ageReq: 5, row: 2, reqTech: 'rocketry', unlocks: 'win', desc: '승리', img: techFtl }
+    { id: 'internet', name: '인터넷', cost: 6000, type: 'sci', ageReq: 4, reqTech: 'electricity', effect: 'sci_eff', desc: '과학 효율 2배', img: techInternet },
+    { id: 'globalization', name: '세계화', cost: 7000, type: 'sci', ageReq: 4, reqTech: 'internet', reqRace: 'human', effect: 'all_eff', desc: '모든 효율 증가 (인간 전용)', img: techGlobalization },
+    { id: 'computer', name: '컴퓨터', cost: 8000, type: 'sci', ageReq: 4, reqTech: 'internet', effect: 'sci_eff', desc: '과학 효율 2배', img: techComputer },
+    { id: 'time_warp', name: '시간 왜곡', cost: 7000, type: 'sci', ageReq: 4, reqTech: 'computer', reqRace: 'atlantean', effect: 'sci_eff_3x', desc: '과학 효율 3배 (아틀란티스인 전용)', img: techTimeWarp },
+    { id: 'rocketry', name: '로켓 공학', cost: 15000, type: 'sci', ageReq: 4, reqTech: 'computer', unlocks: 'space', desc: '우주 시대로 진입', img: techRocketry },
+    { id: 'ftl', name: '초광속 여행', cost: 50000, type: 'sci', ageReq: 5, reqTech: 'rocketry', unlocks: 'win', desc: '승리', img: techFtl }
 ];
 
 export const BUILDINGS = {
