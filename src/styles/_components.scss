@@ -458,3 +458,265 @@
     padding: $spacing-4;
     color: $slate-500;
 }
+
+// ========================================
+// Tech Tree Modal Styles
+// ========================================
+
+.tech-tree-modal {
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    width: 95vw;
+    max-width: 1600px;
+    background-color: $slate-900;
+    border-radius: $radius-lg;
+    @include shadow-lg;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid $slate-700;
+
+    .modal-header {
+        padding: $spacing-4;
+        background-color: $slate-800;
+        border-bottom: 1px solid $slate-700;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .modal-title {
+            display: flex;
+            align-items: center;
+            gap: $spacing-2;
+            font-size: $text-xl;
+            font-weight: 700;
+            color: $slate-200;
+        }
+
+        .modal-controls {
+            display: flex;
+            align-items: center;
+            gap: $spacing-4;
+        }
+
+        .science-display {
+            display: flex;
+            align-items: center;
+            gap: $spacing-2;
+            background-color: rgba(#1e3a8a, 0.3); // blue-900
+            padding: $spacing-2 $spacing-4;
+            border-radius: $radius-full;
+            border: 1px solid #1e40af; // blue-800
+            font-family: $font-mono;
+            color: $blue-300;
+            font-size: $text-lg;
+            font-weight: 700;
+        }
+    }
+}
+
+.tech-tree-container {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+    background-color: #0b1120; // Very dark slate
+    background-image:
+        radial-gradient(circle at 50% 50%, rgba(#1e293b, 0.3) 1px, transparent 1px);
+    background-size: 40px 40px;
+
+    // Custom scrollbar
+    &::-webkit-scrollbar {
+        height: 12px;
+        width: 12px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $slate-900;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $slate-700;
+        border-radius: 6px;
+        border: 3px solid $slate-900;
+
+        &:hover {
+            background: $slate-600;
+        }
+    }
+}
+
+.tech-tree-scroll-content {
+    position: relative;
+    // Size set by inline styles
+}
+
+.tech-ages-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.age-column {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-right: 1px dashed $slate-800;
+
+    .age-label {
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        font-size: 2rem;
+        font-weight: 900;
+        color: $slate-800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        pointer-events: none;
+        user-select: none;
+
+        &.active {
+            color: rgba($slate-600, 0.3);
+        }
+    }
+
+    &:nth-child(even) {
+        background-color: rgba($slate-800, 0.1);
+    }
+}
+
+.tech-connections-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 1;
+
+    .connection-line {
+        transition: stroke 0.3s;
+    }
+}
+
+.tech-tree-node {
+    position: absolute;
+    background-color: $slate-800;
+    border: 1px solid $slate-600;
+    border-radius: $radius-md;
+    z-index: 2;
+    transition: all 0.2s;
+    overflow: hidden;
+    // Dimensions set inline
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+
+    &.researched {
+        border-color: $green-500;
+        box-shadow: 0 0 15px rgba($green-500, 0.1);
+
+        .node-overlay {
+            background: linear-gradient(to bottom, rgba(#064e3b, 0.7), rgba(#065f46, 0.8));
+        }
+
+        .node-name {
+            color: #86efac; // green-300
+        }
+    }
+
+    &.affordable {
+        cursor: pointer;
+        border-color: $blue-500;
+
+        &:hover {
+            transform: scale(1.02);
+            border-color: $blue-400;
+            box-shadow: 0 0 20px rgba($blue-500, 0.2);
+            z-index: 10;
+        }
+
+        .node-name {
+            color: #bfdbfe; // blue-200
+        }
+    }
+
+    &.unaffordable {
+        opacity: 0.8;
+        border-color: $slate-600;
+        cursor: not-allowed;
+
+        .node-name {
+            color: $slate-400;
+        }
+    }
+
+    &.locked {
+        opacity: 0.5;
+        background-color: black;
+        border-color: $slate-800;
+        cursor: not-allowed;
+
+        .node-bg {
+            filter: grayscale(100%) brightness(0.3);
+        }
+    }
+
+    .node-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.3s;
+    }
+
+    &:hover .node-bg {
+        transform: scale(1.05);
+    }
+
+    .node-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, rgba($slate-900, 0.6), rgba($slate-900, 0.9));
+        z-index: 1;
+    }
+
+    .node-content {
+        position: relative;
+        z-index: 2;
+        padding: $spacing-3;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .node-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .node-name {
+        font-weight: 700;
+        font-size: $text-sm;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .node-desc {
+        font-size: 11px;
+        color: $slate-300;
+        line-height: 1.3;
+        margin-top: $spacing-1;
+        opacity: 0.8;
+    }
+
+    .node-cost {
+        align-self: flex-end;
+        font-family: $font-mono;
+        font-size: 11px;
+        color: $blue-300;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background-color: rgba($slate-900, 0.6);
+        padding: 2px 6px;
+        border-radius: $radius-sm;
+    }
+}
