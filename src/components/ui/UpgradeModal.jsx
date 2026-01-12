@@ -14,7 +14,7 @@ export function UpgradeModal({ onClose, buildingLevels, resources, onUpgrade, ge
                 <div className="modal-body padded">
                     <p className="upgrade-intro">
                         건물의 기본 생산 효율을 영구적으로 증가시킵니다. <br />
-                        <span className="highlight">레벨당 +20% 추가 효율</span>
+                        <span className="highlight">레벨당 +30% 추가 효율</span>
                     </p>
                     <div className="upgrade-list">
                         {Object.keys(BUILDINGS).map(key => {
@@ -27,12 +27,15 @@ export function UpgradeModal({ onClose, buildingLevels, resources, onUpgrade, ge
                                 <div key={key} className="upgrade-item">
                                     <div className="upgrade-item-header">
                                         <div className="item-name">{BUILDINGS[key].name}</div>
-                                        <div className="item-level">Lv.{currentLevel} <span className="arrow">→</span> Lv.{currentLevel + 1}</div>
+                                        <div className="item-level">
+                                            Lv.{currentLevel}
+                                            {!isMax && <span className="arrow"> → Lv.{currentLevel + 1}</span>}
+                                        </div>
                                     </div>
                                     <div className="upgrade-item-footer">
                                         <div className="item-efficiency">
-                                            효율: <span className="current">{100 + currentLevel * 20}%</span>
-                                            {!isMax && <span className="next">→ {100 + (currentLevel + 1) * 20}% <ArrowUp size={10} /></span>}
+                                            효율: <span className="current">{100 + currentLevel * 30}%</span>
+                                            {!isMax && <span className="next"> → {100 + (currentLevel + 1) * 30}% <ArrowUp size={10} /></span>}
                                         </div>
                                         {isMax ? (
                                             <button className="upgrade-action-btn maxed">최대 레벨</button>

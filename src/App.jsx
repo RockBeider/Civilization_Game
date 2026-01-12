@@ -47,6 +47,18 @@ function App() {
 
     useEffect(() => { refreshSlots(); }, []);
 
+    // Cheat code
+    useEffect(() => {
+        window.cheat = (food = 0, prod = 0, sci = 0) => {
+            setResources(prev => ({
+                food: prev.food + food,
+                prod: prev.prod + prod,
+                sci: prev.sci + sci
+            }));
+            console.log(`Resources Added: Food +${food}, Prod +${prod}, Sci +${sci}`);
+        };
+    }, []);
+
     const toggleFullScreen = () => {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen().catch((e) => {
@@ -260,8 +272,18 @@ function App() {
                 prod: prev.prod - costProd,
                 sci: prev.sci - costSci
             }));
-            setBuildings(prev => ({ ...prev, [type]: prev[type] + 1 }));
+
+            const newCount = buildings[type] + 1;
+            setBuildings(prev => ({ ...prev, [type]: newCount }));
             addLog(`${building.name} 건설 완료!`);
+
+            // Check for upgrade unlock
+            if (type === 'lab' && newCount === 10) {
+                setTimeout(() => {
+                    addLog(">>> 시설 기술 강화가 해금되었습니다! <<<");
+                    playSound('age'); // Use a distinct sound if available, 'age' is impactful
+                }, 500); // Slight delay for emphasis
+            }
         } else {
             playSound('error');
             addLog("자원이 부족합니다.");
@@ -433,9 +455,9 @@ function App() {
                     </div>
 
                     <div className="resource-bar">
-                        <ResourceCard icon={<Wheat size={20} className="icon-text-yellow" />} label="식량" value={resources.food} rate={buildings.farm * selectedRace.bonus.food * multipliers.food * (1 + buildingLevels.farm * 0.2)} />
-                        <ResourceCard icon={<Hammer size={20} className="icon-text-orange" />} label="생산력" value={resources.prod} rate={buildings.mine * selectedRace.bonus.prod * multipliers.prod * (1 + buildingLevels.mine * 0.2)} />
-                        <ResourceCard icon={<FlaskConical size={20} className="icon-text-blue" />} label="과학" value={resources.sci} rate={buildings.lab * selectedRace.bonus.sci * multipliers.sci * (1 + buildingLevels.lab * 0.2)} />
+                        <ResourceCard icon={<Wheat size={20} className="icon-text-yellow" />} label="식량" value={resources.food} rate={buildings.farm * selectedRace.bonus.food * multipliers.food * (1 + buildingLevels.farm * 0.3)} />
+                        <ResourceCard icon={<Hammer size={20} className="icon-text-orange" />} label="생산력" value={resources.prod} rate={buildings.mine * selectedRace.bonus.prod * multipliers.prod * (1 + buildingLevels.mine * 0.3)} />
+                        <ResourceCard icon={<FlaskConical size={20} className="icon-text-blue" />} label="과학" value={resources.sci} rate={buildings.lab * selectedRace.bonus.sci * multipliers.sci * (1 + buildingLevels.lab * 0.3)} />
                     </div>
                 </div>
             </header>
@@ -477,7 +499,7 @@ function App() {
                                 const canAfford = resources.food >= cost.food && resources.prod >= cost.prod && resources.sci >= cost.sci;
                                 const outputName = key === 'farm' ? '식량' : key === 'mine' ? '생산' : '과학';
                                 const baseOutput = 1;
-                                const bonusOutput = baseOutput * ((buildingLevels[key] || 0) * 0.2);
+                                const bonusOutput = baseOutput * ((buildingLevels[key] || 0) * 0.3);
 
                                 return (
                                     <div key={key} onClick={() => buyBuilding(key)}
@@ -505,19 +527,21 @@ function App() {
                             })}
                         </div>
 
-                        {/* 업그레이드 버튼 */}
-                        <button onClick={() => setIsUpgradeModalOpen(true)} className="upgrade-btn">
-                            <div className="flex items-center gap-3">
-                                <div className="upgrade-icon">
-                                    <Wrench size={20} />
+                        {/* 업그레이드 버튼 - 연구소 10개 이상일 때 해금 */}
+                        {buildings.lab >= 10 && (
+                            <button onClick={() => setIsUpgradeModalOpen(true)} className="upgrade-btn">
+                                <div className="flex items-center gap-3">
+                                    <div className="upgrade-icon">
+                                        <Wrench size={20} />
+                                    </div>
+                                    <div className="upgrade-info">
+                                        <div className="upgrade-title">시설 기술 강화</div>
+                                        <div className="upgrade-desc">건물 생산 효율 영구 증가</div>
+                                    </div>
                                 </div>
-                                <div className="upgrade-info">
-                                    <div className="upgrade-title">시설 기술 강화</div>
-                                    <div className="upgrade-desc">건물 생산 효율 영구 증가</div>
-                                </div>
-                            </div>
-                            <ArrowUp size={16} className="upgrade-arrow" />
-                        </button>
+                                <ArrowUp size={16} className="upgrade-arrow" />
+                            </button>
+                        )}
 
                         <SectionTitle title="불가사의" />
                         {hasWonder ? (
@@ -574,6 +598,22 @@ function App() {
                             {TECH_TREE.map((tech) => {
                                 const isResearched = researched.includes(tech.id);
                                 const isAvailable = !isResearched && tech.ageReq <= currentAge;
+
+                                // Logic for dependencies
+                                let isLocked = false;
+                                let missingReqs = [];
+
+                                if (tech.reqTech) {
+                                    const reqs = Array.isArray(tech.reqTech) ? tech.reqTech : [tech.reqTech];
+                                    reqs.forEach(reqId => {
+                                        if (!researched.includes(reqId)) {
+                                            isLocked = true;
+                                            const req = TECH_TREE.find(t => t.id === reqId);
+                                            missingReqs.push(req ? req.name : reqId);
+                                        }
+                                    });
+                                }
+
                                 const canAfford = resources.sci >= tech.cost;
 
                                 // Filter by race
@@ -582,18 +622,31 @@ function App() {
                                 if (!isResearched && tech.ageReq > currentAge) return null;
 
                                 return (
-                                    <div key={tech.id} onClick={() => isAvailable && canAfford ? research(tech) : null}
-                                        className={`tech-card ${isResearched ? 'researched' : 'available'} ${!isResearched && canAfford ? 'affordable' : !isResearched ? 'unaffordable' : ''}`}>
-                                        <div className="tech-header">
-                                            <h3 className={`tech-name ${isResearched ? 'researched' : 'available'}`}>{tech.name}</h3>
-                                            {isResearched ? <Zap size={16} className="tech-icon researched" /> : <FlaskConical size={16} className="tech-icon available" />}
-                                        </div>
-                                        <p className="tech-desc">{tech.desc}</p>
-                                        {!isResearched && (
-                                            <div className={`tech-cost ${canAfford ? 'affordable' : 'unaffordable'}`}>
-                                                필요 과학: {tech.cost.toLocaleString()}
+                                    <div key={tech.id}
+                                        onClick={() => isAvailable && canAfford && !isLocked ? research(tech) : null}
+                                        className={`tech-card ${isResearched ? 'researched' : 'available'} ${isLocked ? 'locked' : (!isResearched && canAfford ? 'affordable' : !isResearched ? 'unaffordable' : '')}`}
+                                        style={tech.img ? { backgroundImage: `url(${tech.img})` } : {}}
+                                    >
+                                        <div className="tech-overlay"></div>
+                                        <div className="tech-content-wrapper">
+                                            <div className="tech-header">
+                                                <h3 className={`tech-name ${isResearched ? 'researched' : 'available'}`}>{tech.name}</h3>
+                                                {isResearched ? <Zap size={16} className="tech-icon researched" /> : <FlaskConical size={16} className="tech-icon available" />}
                                             </div>
-                                        )}
+                                            <p className="tech-desc">{tech.desc}</p>
+
+                                            {!isResearched && isLocked && (
+                                                <div className="tech-req">
+                                                    🔒 필요: {missingReqs.join(', ')}
+                                                </div>
+                                            )}
+
+                                            {!isResearched && !isLocked && (
+                                                <div className={`tech-cost ${canAfford ? 'affordable' : 'unaffordable'}`}>
+                                                    필요 과학: {tech.cost.toLocaleString()}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 );
                             })}

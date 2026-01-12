@@ -331,11 +331,23 @@
     border-radius: $radius-lg;
     border: 1px solid;
     transition: all 0.2s;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden; // Ensure overlay stays inside
+
+    // Default background if no image
+    background-color: $slate-800;
 
     &.researched {
-        background-color: rgba($green-900, 0.2);
+        background-color: rgba($green-900, 0.2); // Fallback
         border-color: rgba($green-500, 0.3);
         opacity: 0.7;
+
+        // Darken accomplished techs more to show they are done
+        .tech-overlay {
+            background: linear-gradient(to bottom, rgba(#052e16, 0.8), rgba(#14532d, 0.9));
+        }
     }
 
     &.available {
@@ -346,7 +358,13 @@
             border-color: $indigo-500;
 
             &:hover {
-                background-color: rgba($indigo-800, 0.4);
+                transform: translateY(-2px);
+                @include shadow-lg;
+                border-color: #818cf8; // indigo-400
+
+                .tech-overlay {
+                    background: linear-gradient(to bottom, rgba($slate-900, 0.6), rgba($slate-900, 0.7));
+                }
             }
         }
 
@@ -356,6 +374,36 @@
             opacity: 0.8;
         }
     }
+
+    &.locked {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background-color: $slate-900;
+        border-color: $slate-700;
+
+        &:hover {
+            transform: none;
+            border-color: $slate-700;
+        }
+
+        .tech-overlay {
+            background: rgba(#020617, 0.85); // Very dark for locked
+        }
+    }
+}
+
+.tech-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba($slate-900, 0.7), rgba($slate-900, 0.8));
+    transition: background 0.3s;
+    z-index: 1;
+}
+
+.tech-content-wrapper {
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .tech-header {
@@ -364,13 +412,14 @@
 
     .tech-name {
         font-weight: 700;
+        font-size: $text-lg;
 
         &.researched {
             color: $green-400;
         }
 
         &.available {
-            color: $indigo-300;
+            color: #c7d2fe; // indigo-200
         }
     }
 
