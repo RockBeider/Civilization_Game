@@ -1,10 +1,13 @@
 {
   "name": "civilization-game",
   "version": "1.0.0",
+  "homepage": "https://RockBeider.github.io/Civilization_Game/",
   "description": "Civilization Simulation Game",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -15,6 +18,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.0",
+    "gh-pages": "^6.3.0",
     "sass": "^1.69.0",
     "vite": "^5.0.0"
   }
